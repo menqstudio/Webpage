@@ -1,0 +1,101 @@
+# Next.js Starter Structure
+
+This folder describes the recommended folder/file structure for implementation.
+
+```txt
+ai-business-landing/
+  package.json
+  next.config.ts
+  tsconfig.json
+  tailwind.config.ts
+  postcss.config.mjs
+  .env.example
+  src/
+    app/
+      globals.css
+      [locale]/
+        layout.tsx
+        page.tsx
+        loading.tsx
+        error.tsx
+      api/
+        leads/
+          route.ts
+    components/
+      layout/
+        Header.tsx
+        Footer.tsx
+        Section.tsx
+        Container.tsx
+      landing/
+        HeroSection.tsx
+        PainSection.tsx
+        SolutionOverviewSection.tsx
+        ServiceBlocksSection.tsx
+        BusinessSuccessSection.tsx
+        IndustriesSection.tsx
+        ResultsSection.tsx
+        AISection.tsx
+        HowWeWorkSection.tsx
+        TrustSection.tsx
+        FAQSection.tsx
+        CTASection.tsx
+      ui/
+        Button.tsx
+        Badge.tsx
+        Card.tsx
+        GlassCard.tsx
+        SectionHeading.tsx
+        IconWrap.tsx
+        FormField.tsx
+        SelectField.tsx
+        TextArea.tsx
+        Accordion.tsx
+        DashboardMockup.tsx
+        WorkflowVisual.tsx
+    content/
+      locales/
+        hy.ts
+        en.ts
+        ru.ts
+    config/
+      site.ts
+      navigation.ts
+      services.ts
+      industries.ts
+      faq.ts
+      contact.ts
+    lib/
+      forms/
+        validation.ts
+        submitLead.ts
+      integrations/
+        email.ts
+        telegram.ts
+      seo/
+        metadata.ts
+    styles/
+      tokens/
+        primitives.css
+        semantic.css
+        components.css
+        motion.css
+```
+
+## .env.example
+```txt
+LEADS_EMAIL_TO=
+LEADS_EMAIL_FROM=
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASSWORD=
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_DEFAULT_LOCALE=hy
+DATABASE_URL=
+```
+
+## Implementation note
+The actual project can be created from this structure. This build pack intentionally provides documentation and architecture, not final application source code.

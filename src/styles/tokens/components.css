@@ -1,0 +1,28 @@
+/* =========================================================================
+   COMPONENT TOKENS — component-specific aliases built on semantic tokens.
+   ========================================================================= */
+:root {
+  /* ---- Button ---- */
+  --button-height-sm: 2.5rem;
+  --button-height-md: 3rem;
+  --button-height-lg: 3.5rem;
+  --button-padding-x-sm: var(--space-4);
+  --button-padding-x-md: var(--space-5);
+  --button-padding-x-lg: var(--space-6);
+  --button-radius: var(--radius-button);
+  --button-primary-bg: var(--color-action-primary);
+  --button-primary-bg-hover: var(--color-action-primary-hover);
+  --button-primary-text: var(--color-content-inverse);
+
+  /* ---- Card ---- */
+  --card-bg: var(--color-surface-primary);
+  --card-border-color: var(--color-border-subtle);
+  --card-radius: var(--radius-card);
+  --card-padding: var(--space-6);
+  --card-shadow: var(--shadow-card);
+
+  /* ---- Header ---- */
+  --header-bg: color-mix(in srgb, var(--color-page-bg) 82%, transparent);
+  --header-border-color: var(--color-border-subtle);
+  --header-blur: 16px;
+}

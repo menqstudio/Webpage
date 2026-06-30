@@ -1,0 +1,438 @@
+// MenQ — data model. PostgreSQL + Prisma.
+// Covers public lead flow (M2), auth/RBAC (M3), and admin content (M4).
+
+generator client {
+  provider      = "prisma-client-js"
+  // "native" for local dev; the musl target is for the Alpine Docker image.
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────── Enums
+
+enum UserStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  SUSPENDED
+  REJECTED
+  DEACTIVATED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  WON
+  LOST
+  REJECTED
+  SPAM
+  DUPLICATE
+  ARCHIVED
+}
+
+enum NotificationStatus {
+  PENDING
+  EMAIL_SENT
+  TELEGRAM_SENT
+  BOTH_SENT
+  PARTIALLY_FAILED
+  FAILED
+  RETRY_PENDING
+}
+
+enum BookingStatus {
+  NEW
+  CONFIRMED
+  RESCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+  ARCHIVED
+}
+
+enum ContentStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  PUBLISHED
+  REJECTED
+  ARCHIVED
+}
+
+enum NoteVisibility {
+  INTERNAL
+  PRIVATE_ADMIN
+}
+
+enum Severity {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+// ─────────────────────────────────────────── Auth + RBAC
+
+model User {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  passwordHash String?
+  status       UserStatus @default(PENDING_APPROVAL)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deactivatedAt DateTime?
+  deactivatedById String?
+  deletedAt    DateTime?
+  deletedById  String?
+
+  roles            UserRole[]
+  sessions         Session[]
+  invitesCreated   InviteToken[]      @relation("InviteCreatedBy")
+  passwordResets   PasswordResetToken[]
+  assignedLeads    Lead[]             @relation("LeadAssignee")
+  leadNotes        LeadNote[]
+  auditLogs        AuditLog[]
+
+  @@index([status])
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  name        String
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  permissions RolePermission[]
+  users       UserRole[]
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  domain      String
+  action      String
+  description String?
+  createdAt   DateTime @default(now())
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId     String
+  roleId     String
+  assignedBy String?
+  assignedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model InviteToken {
+  id          String    @id @default(uuid())
+  email       String
+  tokenHash   String    @unique
+  roleKey     String?
+  createdById String?
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  createdBy User? @relation("InviteCreatedBy", fields: [createdById], references: [id])
+
+  @@index([email])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────── Leads
+
+model Lead {
+  id                 String             @id @default(uuid())
+  source             String             @default("landing_form")
+  status             LeadStatus         @default(NEW)
+  notificationStatus NotificationStatus @default(PENDING)
+
+  name               String
+  company            String?
+  phone              String?
+  email              String?
+  interestedSolution String
+  message            String
+
+  locale     String  @default("hy")
+  sourcePage String?
+  referrer   String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmTerm     String?
+  utmContent  String?
+  consent    Boolean @default(false)
+  ipAddress  String?
+
+  assignedToId String?
+  assignedById String?
+  assignedAt   DateTime?
+  archivedAt   DateTime?
+  archivedById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignedTo        User?                 @relation("LeadAssignee", fields: [assignedToId], references: [id])
+  notes             LeadNote[]
+  events            LeadEvent[]
+  notificationLogs  LeadNotificationLog[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+  @@index([phone])
+}
+
+model LeadNote {
+  id          String         @id @default(uuid())
+  leadId      String
+  body        String
+  visibility  NoteVisibility @default(INTERNAL)
+  createdById String?
+  createdAt   DateTime       @default(now())
+
+  lead      Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdBy User? @relation(fields: [createdById], references: [id])
+}
+
+model LeadEvent {
+  id        String   @id @default(uuid())
+  leadId    String
+  eventType String
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+model LeadNotificationLog {
+  id           String   @id @default(uuid())
+  leadId       String
+  channel      String
+  status       String
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────── Bookings
+
+model Booking {
+  id        String        @id @default(uuid())
+  status    BookingStatus @default(NEW)
+  name      String
+  company   String?
+  phone     String?
+  email     String?
+  message   String?
+  locale    String        @default("hy")
+  preferredAt DateTime?
+  assignedToId String?
+  archivedAt   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+// ─────────────────────────────────────────── Content (admin-managed)
+
+model ContentItem {
+  id                 String        @id @default(uuid())
+  type               String
+  language           String
+  translationGroupId String?
+  title              String
+  slug               String?
+  shortDescription   String?
+  content            Json?
+  status             ContentStatus @default(DRAFT)
+  order              Int           @default(0)
+  isFeatured         Boolean       @default(false)
+  seoTitle           String?
+  seoDescription     String?
+
+  authorId       String?
+  submittedById  String?
+  submittedAt    DateTime?
+  reviewedById   String?
+  reviewedAt     DateTime?
+  rejectionReason String?
+  publishedById  String?
+  publishedAt    DateTime?
+  archivedById   String?
+  archivedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type, language])
+  @@index([status])
+}
+
+model Service {
+  id                 String        @id @default(uuid())
+  language           String
+  translationGroupId String?
+  title              String
+  slug               String
+  category           String?
+  shortDescription   String?
+  fullDescription    String?
+  businessValue      String?
+  features           Json?
+  iconKey            String?
+  order              Int           @default(0)
+  isFeatured         Boolean       @default(false)
+  status             ContentStatus @default(DRAFT)
+  seoTitle           String?
+  seoDescription     String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([language, status])
+}
+
+model Industry {
+  id                 String        @id @default(uuid())
+  language           String
+  translationGroupId String?
+  title              String
+  slug               String
+  group              String?
+  description        String?
+  painPoints         Json?
+  recommendedSolutions String?
+  iconKey            String?
+  order              Int           @default(0)
+  isFeatured         Boolean       @default(false)
+  status             ContentStatus @default(DRAFT)
+  seoTitle           String?
+  seoDescription     String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([language, status])
+}
+
+model Faq {
+  id                 String        @id @default(uuid())
+  language           String
+  translationGroupId String?
+  question           String
+  answer             String
+  category           String?
+  order              Int           @default(0)
+  status             ContentStatus @default(DRAFT)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([language, status])
+}
+
+model MediaAsset {
+  id           String   @id @default(uuid())
+  fileUrl      String
+  fileType     String?
+  title        String?
+  altText      String?
+  usageContext String?
+  language     String?
+  uploadedById String?
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  archivedAt   DateTime?
+}
+
+// ─────────────────────────────────────────── Audit + system events
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorUserId String?
+  actorRole   String?
+  action      String
+  entityType  String
+  entityId    String?
+  oldValue    Json?
+  newValue    Json?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  actor User? @relation(fields: [actorUserId], references: [id])
+
+  @@index([action])
+  @@index([createdAt])
+}
+
+model SystemEvent {
+  id        String   @id @default(uuid())
+  severity  Severity @default(INFO)
+  eventType String
+  message   String
+  metadata  Json?
+  userId    String?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([severity])
+  @@index([eventType])
+  @@index([createdAt])
+}

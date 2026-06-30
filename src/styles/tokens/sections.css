@@ -1,0 +1,57 @@
+/* =========================================================================
+   SECTION SCOPES — a "contrast" section is a dark navy panel in BOTH themes.
+   It locally redefines semantic tokens to dark values, so child components
+   keep using normal semantic classes (text-content-primary, glass, ...) and
+   render correctly on the dark background regardless of the active theme.
+   ========================================================================= */
+.section-contrast {
+  --color-page-bg: var(--neutral-950);
+  --color-surface-primary: color-mix(
+    in srgb,
+    var(--neutral-900) 80%,
+    var(--blue-600) 20%
+  );
+  --color-surface-secondary: var(--neutral-900);
+  --color-surface-muted: color-mix(
+    in srgb,
+    var(--neutral-900) 70%,
+    var(--blue-600) 30%
+  );
+  --color-surface-inverse: var(--neutral-0);
+
+  --color-content-primary: var(--neutral-0);
+  --color-content-secondary: var(--neutral-200);
+  --color-content-muted: var(--neutral-400);
+  --color-content-inverse: var(--neutral-950);
+
+  --color-border-subtle: color-mix(in srgb, var(--neutral-0) 12%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--cyan-400) 32%, transparent);
+
+  --color-action-primary: var(--blue-500);
+  --color-action-primary-hover: var(--cyan-400);
+  --color-action-secondary: var(--neutral-0);
+  --color-accent: var(--cyan-400);
+  --color-accent-soft: color-mix(in srgb, var(--cyan-400) 16%, transparent);
+
+  --color-focus-ring: var(--cyan-400);
+
+  --glass-bg: color-mix(in srgb, var(--neutral-0) 6%, transparent);
+  --grid-line-color: color-mix(in srgb, var(--neutral-0) 6%, transparent);
+
+  background-color: var(--color-page-bg);
+  color: var(--color-content-primary);
+}
+
+/* Spotlight = contrast panel with a stronger accent wash (used for Results). */
+.section-spotlight {
+  background-image: radial-gradient(
+      90% 120% at 100% 0%,
+      color-mix(in srgb, var(--blue-500) 22%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      80% 120% at 0% 100%,
+      color-mix(in srgb, var(--cyan-400) 16%, transparent) 0%,
+      transparent 55%
+    );
+}

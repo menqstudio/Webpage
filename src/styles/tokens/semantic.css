@@ -1,0 +1,146 @@
+/* =========================================================================
+   SEMANTIC TOKENS — meaning-based, theme-aware.
+   These are the values components should mostly consume (via Tailwind classes).
+   ========================================================================= */
+
+:root[data-theme="light"],
+:root:not([data-theme]) {
+  --color-page-bg: var(--neutral-0);
+  --color-surface-primary: var(--neutral-0);
+  --color-surface-secondary: var(--neutral-50);
+  --color-surface-muted: var(--neutral-100);
+  --color-surface-inverse: var(--neutral-950);
+
+  --color-content-primary: var(--neutral-950);
+  --color-content-secondary: var(--neutral-700);
+  --color-content-muted: var(--neutral-500);
+  --color-content-inverse: var(--neutral-0);
+
+  --color-border-subtle: var(--neutral-200);
+  --color-border-strong: var(--neutral-300);
+
+  --color-action-primary: var(--blue-600);
+  --color-action-primary-hover: var(--blue-500);
+  --color-action-secondary: var(--neutral-900);
+  --color-accent: var(--cyan-500);
+  --color-accent-soft: color-mix(in srgb, var(--cyan-500) 14%, transparent);
+
+  --color-success: var(--green-500);
+  --color-warning: var(--amber-500);
+  --color-danger: var(--red-500);
+
+  --color-focus-ring: var(--blue-500);
+
+  /* Decorative gradient + grid, theme aware */
+  --gradient-hero: radial-gradient(
+      120% 120% at 80% 0%,
+      color-mix(in srgb, var(--blue-500) 16%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      90% 90% at 0% 100%,
+      color-mix(in srgb, var(--cyan-400) 12%, transparent) 0%,
+      transparent 55%
+    );
+  --grid-line-color: color-mix(in srgb, var(--neutral-950) 6%, transparent);
+}
+
+:root[data-theme="dark"] {
+  --color-page-bg: var(--neutral-950);
+  --color-surface-primary: var(--neutral-900);
+  --color-surface-secondary: var(--neutral-800);
+  --color-surface-muted: color-mix(
+    in srgb,
+    var(--neutral-900) 72%,
+    var(--blue-600) 28%
+  );
+  --color-surface-inverse: var(--neutral-0);
+
+  --color-content-primary: var(--neutral-0);
+  --color-content-secondary: var(--neutral-200);
+  --color-content-muted: var(--neutral-400);
+  --color-content-inverse: var(--neutral-950);
+
+  --color-border-subtle: color-mix(in srgb, var(--neutral-0) 12%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--cyan-400) 32%, transparent);
+
+  --color-action-primary: var(--blue-500);
+  --color-action-primary-hover: var(--cyan-400);
+  --color-action-secondary: var(--neutral-0);
+  --color-accent: var(--cyan-400);
+  --color-accent-soft: color-mix(in srgb, var(--cyan-400) 16%, transparent);
+
+  --color-success: var(--green-500);
+  --color-warning: var(--amber-500);
+  --color-danger: var(--red-500);
+
+  --color-focus-ring: var(--cyan-400);
+
+  --gradient-hero: radial-gradient(
+      120% 120% at 80% 0%,
+      color-mix(in srgb, var(--blue-500) 26%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      90% 90% at 0% 100%,
+      color-mix(in srgb, var(--cyan-400) 18%, transparent) 0%,
+      transparent 55%
+    );
+  --grid-line-color: color-mix(in srgb, var(--neutral-0) 6%, transparent);
+}
+
+/* First-visit / no cookie → follow the OS preference via pure CSS (no script,
+   no flash). An explicit data-theme (set from the cookie) always wins. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-page-bg: var(--neutral-950);
+    --color-surface-primary: var(--neutral-900);
+    --color-surface-secondary: var(--neutral-800);
+    --color-surface-muted: color-mix(
+      in srgb,
+      var(--neutral-900) 72%,
+      var(--blue-600) 28%
+    );
+    --color-surface-inverse: var(--neutral-0);
+
+    --color-content-primary: var(--neutral-0);
+    --color-content-secondary: var(--neutral-200);
+    --color-content-muted: var(--neutral-400);
+    --color-content-inverse: var(--neutral-950);
+
+    --color-border-subtle: color-mix(in srgb, var(--neutral-0) 12%, transparent);
+    --color-border-strong: color-mix(in srgb, var(--cyan-400) 32%, transparent);
+
+    --color-action-primary: var(--blue-500);
+    --color-action-primary-hover: var(--cyan-400);
+    --color-action-secondary: var(--neutral-0);
+    --color-accent: var(--cyan-400);
+    --color-accent-soft: color-mix(in srgb, var(--cyan-400) 16%, transparent);
+
+    --color-focus-ring: var(--cyan-400);
+
+    --gradient-hero: radial-gradient(
+        120% 120% at 80% 0%,
+        color-mix(in srgb, var(--blue-500) 26%, transparent) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        90% 90% at 0% 100%,
+        color-mix(in srgb, var(--cyan-400) 18%, transparent) 0%,
+        transparent 55%
+      );
+    --grid-line-color: color-mix(in srgb, var(--neutral-0) 6%, transparent);
+  }
+}
+
+/* ---- Shadow + glow that depend on the accent ---- */
+:root {
+  --shadow-glow: 0 0 40px color-mix(in srgb, var(--color-accent) 24%, transparent);
+  --shadow-card: var(--shadow-md);
+
+  /* ---- Glass tokens (depend on theme-aware surface) ---- */
+  --glass-bg: color-mix(in srgb, var(--color-surface-primary) 72%, transparent);
+  --glass-border-color: var(--color-border-subtle);
+  --glass-blur: 18px;
+  --glass-shadow: var(--shadow-lg);
+}
