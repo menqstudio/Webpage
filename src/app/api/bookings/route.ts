@@ -3,8 +3,12 @@ import { getPrisma } from "@/lib/db/prisma";
 import { logSystemEvent } from "@/lib/db/systemEvents";
 import { errSummary } from "@/lib/errors";
 import { clientIp } from "@/lib/http/clientIp";
+import { notifyBooking } from "@/lib/bookings/notify";
 
 export const runtime = "nodejs";
+
+// Reject oversized payloads before parsing (fields are capped again below).
+const MAX_BODY_BYTES = 50_000;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOCALES = ["hy", "en", "ru"];
@@ -24,6 +28,10 @@ function isRateLimited(ip: string): boolean {
 
 export async function POST(req: NextRequest) {
   const ip = clientIp(req.headers);
+
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "PAYLOAD_TOO_LARGE" }, { status: 413 });
+  }
 
   let body: Record<string, unknown>;
   try {
@@ -86,6 +94,8 @@ export async function POST(req: NextRequest) {
         preferredAt,
       },
     });
+    // Notify Email + Telegram (save-first, then notify — mirrors the lead flow).
+    await notifyBooking({ name, company, phone, email, message, locale, preferredAt });
     return NextResponse.json({ ok: true });
   } catch (error) {
     await logSystemEvent({

@@ -2,6 +2,11 @@ import nodemailer from "nodemailer";
 import { errSummary } from "@/lib/errors";
 import type { LeadNotification, ChannelResult } from "./notifyTypes";
 
+// Bound every SMTP phase so a hung mail server can't stall the request.
+const SMTP_CONNECTION_TIMEOUT_MS = 8000;
+const SMTP_GREETING_TIMEOUT_MS = 8000;
+const SMTP_SOCKET_TIMEOUT_MS = 10000;
+
 export function isEmailConfigured(): boolean {
   return Boolean(
     process.env.SMTP_HOST &&
@@ -27,6 +32,9 @@ function buildTransport() {
     auth: process.env.SMTP_USER
       ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
       : undefined,
+    connectionTimeout: SMTP_CONNECTION_TIMEOUT_MS,
+    greetingTimeout: SMTP_GREETING_TIMEOUT_MS,
+    socketTimeout: SMTP_SOCKET_TIMEOUT_MS,
   });
 }
 
@@ -78,15 +86,7 @@ export async function sendLeadEmail(
     return { channel: "email", outcome: "skipped" };
   }
   try {
-    const port = Number(process.env.SMTP_PORT);
-    const transport = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port,
-      secure: port === 465,
-      auth: process.env.SMTP_USER
-        ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-        : undefined,
-    });
+    const transport = buildTransport();
 
     await transport.sendMail({
       from: process.env.EMAIL_FROM,

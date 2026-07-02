@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getPrisma } from "@/lib/db/prisma";
-import { requirePermission } from "@/lib/auth/rbac";
+import { requirePermission, requireAnyPermission, userHasPermission } from "@/lib/auth/rbac";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { getSectionDef } from "@/config/sectionContent";
 
@@ -45,7 +45,7 @@ function parseContent(type: string, fd: FormData): JsonContent | null {
 }
 
 export async function saveSectionAction(fd: FormData): Promise<void> {
-  const actor = await requirePermission("content.edit");
+  const actor = await requireAnyPermission(["content.edit", "content.edit_assigned"]);
   const type = String(fd.get("type") ?? "");
   const language = LOCALES.includes(String(fd.get("language")))
     ? String(fd.get("language"))
@@ -61,10 +61,14 @@ export async function saveSectionAction(fd: FormData): Promise<void> {
     where: { type, language },
     select: { id: true },
   });
+  // Non-publishers (e.g. Editor) can edit but never push changes live.
+  const canPublish = userHasPermission(actor, "content.publish");
   if (existing) {
     await db.contentItem.update({
       where: { id: existing.id },
-      data: { content, title: type },
+      data: canPublish
+        ? { content, title: type }
+        : { content, title: type, status: "DRAFT" },
     });
   } else {
     await db.contentItem.create({

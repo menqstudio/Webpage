@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getPrisma } from "@/lib/db/prisma";
-import { requirePermission } from "@/lib/auth/rbac";
+import { requirePermission, userHasPermission } from "@/lib/auth/rbac";
 import { writeAuditLog } from "@/lib/auth/audit";
+import { ignoreMissingRecord } from "@/lib/errors";
 
 const LOCALES = ["hy", "en", "ru"];
 
@@ -47,7 +48,15 @@ export async function updateIndustryAction(fd: FormData): Promise<void> {
   const db = getPrisma();
   if (!db || !id) return;
   const data = readForm(fd);
-  await db.industry.update({ where: { id }, data });
+  // Non-publishers (e.g. Editor) can edit but never push changes live.
+  const canPublish = userHasPermission(actor, "industries.publish");
+  const updated = await ignoreMissingRecord(
+    db.industry.update({
+      where: { id },
+      data: canPublish ? data : { ...data, status: "DRAFT" },
+    }),
+  );
+  if (!updated) return;
   await writeAuditLog({
     actorUserId: actor.id,
     action: "industry.updated",
@@ -72,7 +81,10 @@ export async function setIndustryStatusAction(fd: FormData): Promise<void> {
   const actor = await requirePermission(perm);
   const db = getPrisma();
   if (!db || !id) return;
-  await db.industry.update({ where: { id }, data: { status: status as never } });
+  const updated = await ignoreMissingRecord(
+    db.industry.update({ where: { id }, data: { status: status as never } }),
+  );
+  if (!updated) return;
   await writeAuditLog({
     actorUserId: actor.id,
     action: `industry.${status.toLowerCase()}`,

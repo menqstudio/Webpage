@@ -40,10 +40,17 @@ function cap(value: unknown, max: number): string {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
+// Reject oversized payloads before parsing (fields are capped again below).
+const MAX_BODY_BYTES = 50_000;
+
 export async function POST(req: NextRequest) {
   const ip = clientIp(req.headers);
   const userAgent = req.headers.get("user-agent") ?? undefined;
   const referrer = req.headers.get("referer") ?? undefined;
+
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "PAYLOAD_TOO_LARGE" }, { status: 413 });
+  }
 
   let body: Partial<LeadInput>;
   try {
@@ -86,6 +93,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "VALIDATION", fields: errors }, { status: 400 });
   }
 
+  // Sanitize UTM: coerce + cap each known key; drop anything else.
+  const rawUtm =
+    body.utm && typeof body.utm === "object"
+      ? (body.utm as Record<string, unknown>)
+      : undefined;
+  const utm = rawUtm
+    ? {
+        source: cap(rawUtm.source, 200) || undefined,
+        medium: cap(rawUtm.medium, 200) || undefined,
+        campaign: cap(rawUtm.campaign, 200) || undefined,
+        term: cap(rawUtm.term, 200) || undefined,
+        content: cap(rawUtm.content, 200) || undefined,
+      }
+    : undefined;
+
   const lead: LeadInput & { ipAddress?: string; referrer?: string } = {
     name: cap(body.name, LEAD_MAX_LENGTHS.name),
     company: cap(body.company, LEAD_MAX_LENGTHS.company) || undefined,
@@ -96,7 +118,7 @@ export async function POST(req: NextRequest) {
     consent: Boolean(body.consent),
     locale,
     sourcePage: cap(body.sourcePage, 200) || undefined,
-    utm: body.utm,
+    utm,
     ipAddress: ip,
     referrer,
   };

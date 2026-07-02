@@ -1,6 +1,9 @@
 import { errSummary } from "@/lib/errors";
 import type { LeadNotification, ChannelResult } from "./notifyTypes";
 
+// Cap outbound Telegram calls so a hung API can't stall the lead request.
+const TELEGRAM_TIMEOUT_MS = 8000;
+
 export function isTelegramConfigured(): boolean {
   return Boolean(
     process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_LEADS_CHAT_ID,
@@ -22,6 +25,7 @@ export async function sendTelegramMessage(
         text,
         disable_web_page_preview: true,
       }),
+      signal: AbortSignal.timeout(TELEGRAM_TIMEOUT_MS),
     });
     return res.ok ? { sent: true } : { sent: false, error: `HTTP ${res.status}` };
   } catch (error) {
@@ -60,6 +64,7 @@ export async function sendLeadTelegram(
         text: formatMessage(lead),
         disable_web_page_preview: true,
       }),
+      signal: AbortSignal.timeout(TELEGRAM_TIMEOUT_MS),
     });
     if (!res.ok) {
       return {

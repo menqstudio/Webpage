@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requirePermission } from "@/lib/auth/rbac";
+import { requireAnyPermission } from "@/lib/auth/rbac";
 import { getPrisma } from "@/lib/db/prisma";
 import { getAdminDict } from "@/lib/adminI18n";
 import { getDictionary } from "@/content/dictionaries";
@@ -44,7 +44,7 @@ export default async function EditSectionPage({
   params: Promise<{ type: string }>;
   searchParams: Promise<{ lang?: string; saved?: string }>;
 }) {
-  await requirePermission("content.edit");
+  await requireAnyPermission(["content.edit", "content.edit_assigned"]);
   const { type } = await params;
   const { lang, saved } = await searchParams;
   const def = getSectionDef(type);

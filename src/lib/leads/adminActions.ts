@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getPrisma } from "@/lib/db/prisma";
 import { requirePermission } from "@/lib/auth/rbac";
 import { writeAuditLog } from "@/lib/auth/audit";
+import { ignoreMissingRecord } from "@/lib/errors";
 import { LEAD_STATUSES } from "./constants";
 
 export async function updateLeadStatusAction(formData: FormData): Promise<void> {
@@ -15,13 +16,16 @@ export async function updateLeadStatusAction(formData: FormData): Promise<void> 
   const db = getPrisma();
   if (!db) return;
   const before = await db.lead.findUnique({ where: { id }, select: { status: true } });
-  await db.lead.update({
-    where: { id },
-    data:
-      status === "ARCHIVED"
-        ? { status: status as never, archivedAt: new Date(), archivedById: actor.id }
-        : { status: status as never },
-  });
+  const updated = await ignoreMissingRecord(
+    db.lead.update({
+      where: { id },
+      data:
+        status === "ARCHIVED"
+          ? { status: status as never, archivedAt: new Date(), archivedById: actor.id }
+          : { status: status as never },
+    }),
+  );
+  if (!updated) return;
   await writeAuditLog({
     actorUserId: actor.id,
     actorRole: actor.roles[0],
@@ -43,7 +47,10 @@ export async function addLeadNoteAction(formData: FormData): Promise<void> {
 
   const db = getPrisma();
   if (!db) return;
-  await db.leadNote.create({ data: { leadId: id, body, createdById: actor.id } });
+  const note = await ignoreMissingRecord(
+    db.leadNote.create({ data: { leadId: id, body, createdById: actor.id } }),
+  );
+  if (!note) return;
   await writeAuditLog({
     actorUserId: actor.id,
     action: "lead.note_added",
@@ -61,14 +68,25 @@ export async function assignLeadAction(formData: FormData): Promise<void> {
 
   const db = getPrisma();
   if (!db) return;
-  await db.lead.update({
-    where: { id },
-    data: {
-      assignedToId: assignedToId || null,
-      assignedById: actor.id,
-      assignedAt: assignedToId ? new Date() : null,
-    },
-  });
+  // Only assign to an existing ACTIVE user (ignore bogus/inactive assignees).
+  if (assignedToId) {
+    const assignee = await db.user.findFirst({
+      where: { id: assignedToId, status: "ACTIVE" },
+      select: { id: true },
+    });
+    if (!assignee) return;
+  }
+  const updated = await ignoreMissingRecord(
+    db.lead.update({
+      where: { id },
+      data: {
+        assignedToId: assignedToId || null,
+        assignedById: actor.id,
+        assignedAt: assignedToId ? new Date() : null,
+      },
+    }),
+  );
+  if (!updated) return;
   await writeAuditLog({
     actorUserId: actor.id,
     action: "lead.assigned",
@@ -87,10 +105,13 @@ export async function archiveLeadAction(formData: FormData): Promise<void> {
 
   const db = getPrisma();
   if (!db) return;
-  await db.lead.update({
-    where: { id },
-    data: { status: "ARCHIVED", archivedAt: new Date(), archivedById: actor.id },
-  });
+  const updated = await ignoreMissingRecord(
+    db.lead.update({
+      where: { id },
+      data: { status: "ARCHIVED", archivedAt: new Date(), archivedById: actor.id },
+    }),
+  );
+  if (!updated) return;
   await writeAuditLog({
     actorUserId: actor.id,
     action: "lead.archived",

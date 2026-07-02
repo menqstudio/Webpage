@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getPrisma } from "@/lib/db/prisma";
 import { requirePermission } from "@/lib/auth/rbac";
 import { writeAuditLog } from "@/lib/auth/audit";
+import { ignoreMissingRecord } from "@/lib/errors";
 import { BOOKING_STATUSES } from "./constants";
 
 export async function updateBookingStatusAction(formData: FormData): Promise<void> {
@@ -15,13 +16,16 @@ export async function updateBookingStatusAction(formData: FormData): Promise<voi
   const db = getPrisma();
   if (!db) return;
   const before = await db.booking.findUnique({ where: { id }, select: { status: true } });
-  await db.booking.update({
-    where: { id },
-    data:
-      status === "ARCHIVED"
-        ? { status: status as never, archivedAt: new Date() }
-        : { status: status as never },
-  });
+  const updated = await ignoreMissingRecord(
+    db.booking.update({
+      where: { id },
+      data:
+        status === "ARCHIVED"
+          ? { status: status as never, archivedAt: new Date() }
+          : { status: status as never },
+    }),
+  );
+  if (!updated) return;
   await writeAuditLog({
     actorUserId: actor.id,
     actorRole: actor.roles[0],
@@ -41,10 +45,13 @@ export async function archiveBookingAction(formData: FormData): Promise<void> {
 
   const db = getPrisma();
   if (!db) return;
-  await db.booking.update({
-    where: { id },
-    data: { status: "ARCHIVED", archivedAt: new Date() },
-  });
+  const updated = await ignoreMissingRecord(
+    db.booking.update({
+      where: { id },
+      data: { status: "ARCHIVED", archivedAt: new Date() },
+    }),
+  );
+  if (!updated) return;
   await writeAuditLog({
     actorUserId: actor.id,
     action: "booking.archived",

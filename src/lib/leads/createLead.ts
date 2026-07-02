@@ -95,10 +95,28 @@ export async function createLead(
       return { ok: false, persisted: false, duplicate: false };
     }
   } else {
+    // No DB — persist the lead to the log so it is never silently dropped
+    // (per FORM_AND_LEAD_FLOW: file/log fallback when the database is down).
+    console.warn(
+      "[lead.no_db] Unpersisted lead:",
+      JSON.stringify({
+        name: input.name,
+        company: input.company,
+        phone: input.phone,
+        email: input.email,
+        interestedSolution: input.interestedSolution,
+        message: input.message,
+        locale: input.locale ?? "hy",
+        sourcePage: input.sourcePage,
+        referrer: input.referrer,
+        utm: input.utm,
+        createdAt: createdAt.toISOString(),
+      }),
+    );
     await logSystemEvent({
       severity: "WARNING",
       eventType: "lead.no_db",
-      message: "DATABASE_URL not set — lead not persisted (dev fallback)",
+      message: "DATABASE_URL not set — lead written to log only (fallback)",
     });
   }
 
