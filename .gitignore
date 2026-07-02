@@ -40,3 +40,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- Bro infra (SuperBro-governed, re-deliverable; do NOT commit) ---
+/.claude/
+/bro/spine/
+/bro/tools/
+/bro/.claude/
+/bro/bro.manifest.json
+/bro/health.report.md
+/bro/logs/
+/bro/_before/
