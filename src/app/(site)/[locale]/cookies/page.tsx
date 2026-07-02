@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDictionary } from "@/content/dictionaries";
 import { isLocale, defaultLocale, locales, type Locale } from "@/lib/i18n";
+import { buildMetadata } from "@/lib/seo/metadata";
 import { LegalPage } from "@/components/legal/LegalPage";
 
 export function generateStaticParams() {
@@ -14,8 +15,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const dict = getDictionary(isLocale(locale) ? locale : defaultLocale);
-  return { title: dict.legal.cookies.title };
+  const loc = isLocale(locale) ? locale : defaultLocale;
+  const dict = getDictionary(loc);
+  return buildMetadata(loc, {
+    path: "/cookies",
+    title: dict.legal.cookies.title,
+    description: dict.legal.cookies.intro,
+  });
 }
 
 export default async function CookiesPage({

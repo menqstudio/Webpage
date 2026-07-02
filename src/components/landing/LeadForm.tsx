@@ -211,6 +211,9 @@ export function LeadForm({
         </div>
       ) : null}
 
+      {/* Consent statement the user actually sees — matches the stored consent. */}
+      <p className="text-xs leading-relaxed text-content-secondary">{f.consentLabel}</p>
+
       <Button type="submit" size="lg" disabled={status === "submitting"}>
         {status === "submitting" ? f.submitting : f.submit}
       </Button>

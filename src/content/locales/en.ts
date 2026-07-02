@@ -42,7 +42,7 @@ export const en: Dictionary = {
     primaryCta: "Get a free consultation",
     secondaryCta: "See the solutions",
     trustLine:
-      "Officially certified specialists • AI solutions • CRM • Web • ERP • Automation • Dashboard",
+      "Specialists growing their qualifications • AI solutions • CRM • Web • ERP • Automation • Dashboard",
     visual: {
       title: "Business control system",
       metrics: [
@@ -349,7 +349,7 @@ export const en: Dictionary = {
       "We build trust through a professional approach, not empty promises.",
     cards: [
       {
-        title: "Certified specialists",
+        title: "Specialists growing their qualifications",
         body: "Our team continuously develops its professional qualifications in AI, automation, and digital solutions.",
       },
       {
