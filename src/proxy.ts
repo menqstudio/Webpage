@@ -1,7 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { locales, defaultLocale, type Locale } from "@/lib/i18n";
+import { SESSION_COOKIE } from "@/lib/auth/cookies";
 
 const LOCALE_COOKIE = "menq-locale";
+
+// Admin routes reachable WITHOUT a session (login/reset/invite flows).
+const PUBLIC_ADMIN_PATHS = [
+  "/admin/login",
+  "/admin/accept-invite",
+  "/admin/forgot",
+  "/admin/reset",
+  "/admin/forbidden",
+];
 
 function detectLocale(req: NextRequest): Locale {
   const cookie = req.cookies.get(LOCALE_COOKIE)?.value;
@@ -26,6 +36,21 @@ function detectLocale(req: NextRequest): Locale {
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Admin gate (defense-in-depth; real authz stays server-side per page/action).
+  // No DB here — just a fast session-cookie presence check on the edge.
+  if (pathname.startsWith("/admin")) {
+    const isPublic = PUBLIC_ADMIN_PATHS.some(
+      (p) => pathname === p || pathname.startsWith(`${p}/`),
+    );
+    if (!isPublic && !req.cookies.get(SESSION_COOKIE)) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/admin/login";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
   const hasLocale = locales.some(
     (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`),
   );
@@ -40,7 +65,8 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  // Run on everything except API, the admin area, Next internals, and files
-  // with an extension. `/admin/*` must NOT be locale-redirected.
-  matcher: ["/((?!api|admin|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  // Run on everything except API, Next internals, and files with an extension.
+  // `/admin/*` IS included now (for the session gate) but is never
+  // locale-redirected — handled explicitly above.
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };

@@ -49,7 +49,8 @@ const loginFails = new Map<string, number[]>();
 function recentLoginFails(key: string): number {
   const now = Date.now();
   const recent = (loginFails.get(key) ?? []).filter((t) => now - t < LOGIN_WINDOW_MS);
-  loginFails.set(key, recent);
+  if (recent.length === 0) loginFails.delete(key);
+  else loginFails.set(key, recent);
   return recent.length;
 }
 function recordLoginFail(key: string): void {

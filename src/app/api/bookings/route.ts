@@ -16,10 +16,22 @@ const LOCALES = ["hy", "en", "ru"];
 // In-memory rate limit (per IP). Single-instance; mirrors /api/leads.
 const WINDOW_MS = 10 * 60_000;
 const MAX_PER_WINDOW = 5;
+const SWEEP_INTERVAL_MS = 10 * 60_000;
 const hits = new Map<string, number[]>();
+let lastSweep = Date.now();
+function sweepHits(now: number): void {
+  if (now - lastSweep < SWEEP_INTERVAL_MS) return;
+  lastSweep = now;
+  for (const [key, times] of hits) {
+    const fresh = times.filter((t) => now - t < WINDOW_MS);
+    if (fresh.length === 0) hits.delete(key);
+    else hits.set(key, fresh);
+  }
+}
 function isRateLimited(ip: string): boolean {
   if (process.env.RATE_LIMIT_ENABLED === "false") return false;
   const now = Date.now();
+  sweepHits(now);
   const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
   recent.push(now);
   hits.set(ip, recent);

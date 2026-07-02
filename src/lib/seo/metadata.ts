@@ -53,6 +53,8 @@ export function buildMetadata(locale: Locale, opts: MetaOptions = {}): Metadata 
       title: metaTitle,
       description: metaDescription,
     },
-    robots: { index: true, follow: true },
+    // No explicit robots tag: pages are indexable by default, and this lets
+    // notFound()'s injected `noindex` stand alone on the 404 page (otherwise
+    // the layout's "index, follow" would conflict with it).
   };
 }

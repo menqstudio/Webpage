@@ -26,8 +26,25 @@ function overLimit(key: string, windowMs: number, max: number): boolean {
 }
 
 const MIN = 60_000;
+
+// Periodically drop keys whose timestamps have all aged out, so the map can't
+// grow unbounded (one entry per unique IP/email/phone) on a long-lived instance.
+const MAX_WINDOW_MS = 60 * MIN;
+const SWEEP_INTERVAL_MS = 10 * MIN;
+let lastSweep = Date.now();
+function sweepBuckets(now: number): void {
+  if (now - lastSweep < SWEEP_INTERVAL_MS) return;
+  lastSweep = now;
+  for (const [key, times] of buckets) {
+    const fresh = times.filter((t) => now - t < MAX_WINDOW_MS);
+    if (fresh.length === 0) buckets.delete(key);
+    else buckets.set(key, fresh);
+  }
+}
+
 function isRateLimited(ip: string, email?: string, phone?: string): boolean {
   if (process.env.RATE_LIMIT_ENABLED === "false") return false;
+  sweepBuckets(Date.now());
   let limited = false;
   if (overLimit(`ip10:${ip}`, 10 * MIN, 5)) limited = true;
   if (overLimit(`ip60:${ip}`, 60 * MIN, 10)) limited = true;

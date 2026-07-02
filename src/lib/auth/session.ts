@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 import { randomBytes, createHash } from "crypto";
 import { getPrisma } from "@/lib/db/prisma";
+import { SESSION_COOKIE } from "./cookies";
 
-export const SESSION_COOKIE = "menq_session";
+export { SESSION_COOKIE };
 
 const SESSION_MAX_AGE_S = Number(process.env.SESSION_MAX_AGE ?? 60 * 60 * 24 * 7);
 
