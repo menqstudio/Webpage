@@ -6,14 +6,22 @@ import { getPrisma } from "@/lib/db/prisma";
 import { requirePermission } from "@/lib/auth/rbac";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { invalidateUserSessions } from "./session";
-import { ROLE_KEYS } from "./permissions";
+import { ROLE_KEYS, ADMIN_ASSIGNABLE_ROLES } from "./permissions";
 
-async function targetIsSuperAdmin(db: PrismaClient, userId: string): Promise<boolean> {
+async function targetHasRole(
+  db: PrismaClient,
+  userId: string,
+  roleKey: string,
+): Promise<boolean> {
   const roles = await db.userRole.findMany({
     where: { userId },
     include: { role: true },
   });
-  return roles.some((r) => r.role.key === "super_admin");
+  return roles.some((r) => r.role.key === roleKey);
+}
+
+function targetIsSuperAdmin(db: PrismaClient, userId: string): Promise<boolean> {
+  return targetHasRole(db, userId, "super_admin");
 }
 
 export async function deactivateUserAction(formData: FormData): Promise<void> {
@@ -22,6 +30,8 @@ export async function deactivateUserAction(formData: FormData): Promise<void> {
   const db = getPrisma();
   if (!db || !id || id === actor.id) return; // never deactivate yourself
   if (await targetIsSuperAdmin(db, id)) return; // never touch a super admin
+  // Only a Super Admin may act on another Admin.
+  if (!actor.isSuperAdmin && (await targetHasRole(db, id, "admin"))) return;
 
   await db.user.update({
     where: { id },
@@ -43,6 +53,7 @@ export async function reactivateUserAction(formData: FormData): Promise<void> {
   const db = getPrisma();
   if (!db || !id || id === actor.id) return;
   if (await targetIsSuperAdmin(db, id)) return;
+  if (!actor.isSuperAdmin && (await targetHasRole(db, id, "admin"))) return;
 
   await db.user.update({
     where: { id },
@@ -67,6 +78,11 @@ export async function changeUserRoleAction(formData: FormData): Promise<void> {
   if (!(ROLE_KEYS as readonly string[]).includes(roleKey)) return;
   if (id === actor.id) return; // don't change your own role here
   if (await targetIsSuperAdmin(db, id)) return; // can't modify a super admin
+  // Non-super admins may only assign the lower tier and never touch an Admin.
+  if (!actor.isSuperAdmin) {
+    if (!(ADMIN_ASSIGNABLE_ROLES as readonly string[]).includes(roleKey)) return;
+    if (await targetHasRole(db, id, "admin")) return;
+  }
 
   const role = await db.role.findUnique({ where: { key: roleKey } });
   if (!role) return;

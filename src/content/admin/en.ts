@@ -76,6 +76,8 @@ export const adminEn: AdminDictionary = {
     resetInvalid: "This reset link is invalid or has expired.",
     superAdminInvite: "Super Admin cannot be invited from the panel.",
     invalidEmail: "Enter a valid email.",
+    roleNotAllowed: "You don't have permission to assign this role.",
+    tooManyAttempts: "Too many attempts. Please try again later.",
   },
   dashboard: {
     welcome: "Welcome",

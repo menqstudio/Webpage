@@ -14,6 +14,18 @@ export const ROLE_KEYS = [
 
 export type RoleKey = (typeof ROLE_KEYS)[number];
 
+/**
+ * Roles a non-super-admin (Admin) may assign via invite / role-change.
+ * Admins must NOT be able to mint peer admins or super admins, nor act on
+ * other admin accounts — only Super Admin manages the admin tier.
+ */
+export const ADMIN_ASSIGNABLE_ROLES = [
+  "editor",
+  "moderator",
+  "sales_lead_manager",
+  "viewer",
+] as const;
+
 export const ROLE_META: Record<RoleKey, { name: string; description: string }> = {
   super_admin: { name: "Super Admin", description: "Full system access" },
   admin: { name: "Admin", description: "Operational admin" },

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getPrisma } from "@/lib/db/prisma";
 import { logSystemEvent } from "@/lib/db/systemEvents";
 import { errSummary } from "@/lib/errors";
+import { clientIp } from "@/lib/http/clientIp";
 
 export const runtime = "nodejs";
 
@@ -22,10 +23,7 @@ function isRateLimited(ip: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    req.headers.get("x-real-ip") ??
-    "unknown";
+  const ip = clientIp(req.headers);
 
   let body: Record<string, unknown>;
   try {

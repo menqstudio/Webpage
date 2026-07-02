@@ -7,7 +7,12 @@ import { getPrisma } from "@/lib/db/prisma";
 import { logSystemEvent } from "@/lib/db/systemEvents";
 import { sendRawEmail } from "@/lib/integrations/email";
 import { site } from "@/config/site";
-import { hashPassword, verifyPassword, isPasswordStrong } from "./password";
+import {
+  hashPassword,
+  verifyPassword,
+  verifyDummyPassword,
+  isPasswordStrong,
+} from "./password";
 import {
   createSession,
   destroySession,
@@ -17,19 +22,44 @@ import {
 import { getCurrentUser, requirePermission } from "./rbac";
 import { writeAuditLog } from "./audit";
 import { getAdminDict } from "@/lib/adminI18n";
+import { clientIp } from "@/lib/http/clientIp";
+import { ROLE_KEYS, ADMIN_ASSIGNABLE_ROLES } from "./permissions";
 
 export type ActionState = { error?: string; ok?: boolean; info?: string };
 
 async function reqMeta() {
   const h = await headers();
   return {
-    ipAddress: h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? undefined,
+    ipAddress: clientIp(h),
     userAgent: h.get("user-agent") ?? undefined,
   };
 }
 
 const INVITE_TTL_MS = 72 * 60 * 60 * 1000;
 const RESET_TTL_MS = 60 * 60 * 1000;
+
+// ── In-memory login throttle (single-instance; mirrors the lead limiter) ──
+// Caps failed attempts per IP and per email over a rolling window so bcrypt
+// cost isn't the only brute-force speed bump. Swap for a shared store when
+// scaling to multiple instances.
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_MAX_FAILS = 10;
+const loginFails = new Map<string, number[]>();
+
+function recentLoginFails(key: string): number {
+  const now = Date.now();
+  const recent = (loginFails.get(key) ?? []).filter((t) => now - t < LOGIN_WINDOW_MS);
+  loginFails.set(key, recent);
+  return recent.length;
+}
+function recordLoginFail(key: string): void {
+  const recent = loginFails.get(key) ?? [];
+  recent.push(Date.now());
+  loginFails.set(key, recent);
+}
+function clearLoginFails(...keys: string[]): void {
+  for (const k of keys) loginFails.delete(k);
+}
 
 export async function loginAction(
   _prev: ActionState,
@@ -43,9 +73,31 @@ export async function loginAction(
 
   const meta = await reqMeta();
   const generic: ActionState = { error: t.errors.invalidCreds };
+  const ipKey = `ip:${meta.ipAddress}`;
+  const emailKey = `em:${email}`;
+
+  // Throttle brute force per IP and per email before touching the hash.
+  if (
+    process.env.RATE_LIMIT_ENABLED !== "false" &&
+    (recentLoginFails(ipKey) >= LOGIN_MAX_FAILS ||
+      recentLoginFails(emailKey) >= LOGIN_MAX_FAILS)
+  ) {
+    await logSystemEvent({
+      severity: "WARNING",
+      eventType: "auth.login_throttled",
+      message: "Login throttled (too many attempts)",
+      ipAddress: meta.ipAddress,
+    });
+    return { error: t.errors.tooManyAttempts };
+  }
+
   const user = await db.user.findUnique({ where: { email } });
 
   if (!user || !user.passwordHash) {
+    // Run a throwaway hash compare so unknown users cost the same as real ones.
+    await verifyDummyPassword(password);
+    recordLoginFail(ipKey);
+    recordLoginFail(emailKey);
     await logSystemEvent({
       severity: "WARNING",
       eventType: "auth.login_failed",
@@ -57,6 +109,8 @@ export async function loginAction(
 
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) {
+    recordLoginFail(ipKey);
+    recordLoginFail(emailKey);
     await writeAuditLog({
       action: "auth.login_failed",
       entityType: "user",
@@ -70,6 +124,7 @@ export async function loginAction(
     return { error: t.errors.notActive };
   }
 
+  clearLoginFails(ipKey, emailKey);
   await createSession(user.id, meta);
   await db.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
   await writeAuditLog({
@@ -247,6 +302,16 @@ export async function createInviteAction(input: {
   const t = await getAdminDict();
   if (input.roleKey === "super_admin") {
     return { error: t.errors.superAdminInvite };
+  }
+  if (!(ROLE_KEYS as readonly string[]).includes(input.roleKey)) {
+    return { error: t.errors.roleNotAllowed };
+  }
+  // Only a Super Admin may invite an Admin; Admins are limited to the lower tier.
+  if (
+    !actor.isSuperAdmin &&
+    !(ADMIN_ASSIGNABLE_ROLES as readonly string[]).includes(input.roleKey)
+  ) {
+    return { error: t.errors.roleNotAllowed };
   }
   const email = input.email.trim().toLowerCase();
   if (!email.includes("@")) return { error: t.errors.invalidEmail };

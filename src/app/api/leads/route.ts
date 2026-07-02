@@ -9,6 +9,7 @@ import {
 } from "@/lib/forms/lead";
 import { createLead } from "@/lib/leads/createLead";
 import { logSystemEvent } from "@/lib/db/systemEvents";
+import { clientIp } from "@/lib/http/clientIp";
 
 export const runtime = "nodejs";
 
@@ -40,10 +41,7 @@ function cap(value: unknown, max: number): string {
 }
 
 export async function POST(req: NextRequest) {
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    req.headers.get("x-real-ip") ??
-    "unknown";
+  const ip = clientIp(req.headers);
   const userAgent = req.headers.get("user-agent") ?? undefined;
   const referrer = req.headers.get("referer") ?? undefined;
 

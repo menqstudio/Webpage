@@ -75,6 +75,8 @@ export const adminHy = {
     resetInvalid: "Այս վերականգնման հղումն անվավեր է կամ ժամկետանց։",
     superAdminInvite: "Super Admin-ը չի կարող հրավիրվել վահանակից։",
     invalidEmail: "Մուտքագրեք վավեր email։",
+    roleNotAllowed: "Դուք չունեք այս դերը նշանակելու թույլտվություն։",
+    tooManyAttempts: "Չափից շատ փորձեր։ Փորձեք մի փոքր ուշ։",
   },
   dashboard: {
     welcome: "Բարի գալուստ",

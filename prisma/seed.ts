@@ -45,10 +45,17 @@ async function main() {
 
   // 3) Super admin user (created once; never overwrites an existing password)
   const email = (process.env.ADMIN_EMAIL ?? "admin@menq.local").toLowerCase();
+  const existing = await prisma.user.findUnique({ where: { email } });
+
+  // Never mint a brand-new super admin with the known default password in prod.
+  if (!existing && !process.env.ADMIN_PASSWORD && process.env.NODE_ENV === "production") {
+    throw new Error(
+      "Refusing to seed a super admin with the default password in production. Set ADMIN_PASSWORD and re-run.",
+    );
+  }
+
   const password = process.env.ADMIN_PASSWORD ?? "ChangeMe123!";
   const passwordHash = await hashPassword(password);
-
-  const existing = await prisma.user.findUnique({ where: { email } });
   const user = await prisma.user.upsert({
     where: { email },
     update: {},
