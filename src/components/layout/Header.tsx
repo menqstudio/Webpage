@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { navItems } from "@/config/navigation";
 import { site } from "@/config/site";
+import { track, AnalyticsEvent } from "@/lib/analytics/analytics";
 import { cn } from "@/lib/cn";
 import type { Locale } from "@/lib/i18n";
 import type { Dictionary } from "@/content/locales/types";
@@ -115,7 +116,11 @@ export function Header({
           <div className="hidden items-center gap-2 lg:flex">
             <LanguageSwitcher current={locale} label={dict.common.languageLabel} />
             <ThemeToggle label={dict.common.themeToggle} />
-            <ButtonLink href={`/${locale}#${site.anchors.contact}`} size="sm">
+            <ButtonLink
+              href={`/${locale}#${site.anchors.contact}`}
+              size="sm"
+              onClick={() => track(AnalyticsEvent.ctaClick, { location: "header" })}
+            >
               {dict.common.ctaPrimary}
             </ButtonLink>
           </div>
@@ -194,7 +199,10 @@ export function Header({
               <ButtonLink
                 href={`/${locale}#${site.anchors.contact}`}
                 size="lg"
-                onClick={() => setMenuOpen(false)}
+                onClick={() => {
+                  track(AnalyticsEvent.ctaClick, { location: "header_mobile" });
+                  setMenuOpen(false);
+                }}
               >
                 {dict.common.ctaPrimary}
                 <ArrowRight className="h-5 w-5" aria-hidden="true" />

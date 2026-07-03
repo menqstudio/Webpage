@@ -3,7 +3,9 @@ import { ArrowRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
-import { ButtonLink } from "@/components/ui/Button";
+import { buttonClasses } from "@/components/ui/Button";
+import { TrackedLink } from "@/components/analytics/TrackedLink";
+import { AnalyticsEvent } from "@/lib/analytics/analytics";
 import { HeroVisual } from "./HeroVisual";
 import { site } from "@/config/site";
 import { getSectionData } from "@/lib/content/publicContent";
@@ -40,13 +42,23 @@ export async function Hero({ dict, locale }: { dict: Dictionary; locale: Locale 
               {hero.support}
             </p>
             <div className="animate-rise flex flex-col gap-3 sm:flex-row sm:flex-wrap" style={rise(240)}>
-              <ButtonLink href={`#${site.anchors.contact}`} variant="primary" size="lg">
+              <TrackedLink
+                href={`#${site.anchors.contact}`}
+                className={buttonClasses("primary", "lg")}
+                event={AnalyticsEvent.ctaClick}
+                eventProps={{ location: "hero", cta: "primary" }}
+              >
                 {hero.primaryCta}
                 <ArrowRight className="h-5 w-5" aria-hidden="true" />
-              </ButtonLink>
-              <ButtonLink href={`#${site.anchors.solutions}`} variant="outline" size="lg">
+              </TrackedLink>
+              <TrackedLink
+                href={`#${site.anchors.solutions}`}
+                className={buttonClasses("outline", "lg")}
+                event={AnalyticsEvent.ctaClick}
+                eventProps={{ location: "hero", cta: "secondary" }}
+              >
                 {hero.secondaryCta}
-              </ButtonLink>
+              </TrackedLink>
             </div>
             <p className="animate-rise text-sm leading-relaxed text-content-muted" style={rise(300)}>
               {hero.trustLine}

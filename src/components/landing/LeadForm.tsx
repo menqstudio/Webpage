@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { FormField, SelectField, TextAreaField } from "@/components/ui/FormField";
 import { Button } from "@/components/ui/Button";
@@ -33,6 +33,14 @@ export function LeadForm({
   const [values, setValues] = useState<typeof emptyValues>(emptyValues);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<Status>("idle");
+  const started = useRef(false);
+
+  // Fire once, when the visitor first engages with the form.
+  function onFirstInteraction() {
+    if (started.current) return;
+    started.current = true;
+    track(AnalyticsEvent.leadFormStart, { language: locale });
+  }
 
   function update<K extends keyof typeof emptyValues>(
     key: K,
@@ -117,6 +125,7 @@ export function LeadForm({
   return (
     <form
       onSubmit={onSubmit}
+      onFocusCapture={onFirstInteraction}
       noValidate
       className="glass flex flex-col gap-4 rounded-card p-6 sm:p-7"
     >

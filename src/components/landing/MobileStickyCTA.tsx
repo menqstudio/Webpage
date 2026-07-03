@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
+import { track, AnalyticsEvent } from "@/lib/analytics/analytics";
 
 /**
  * Mobile-only sticky bottom CTA. Hides itself while the consultation form is
@@ -35,6 +36,7 @@ export function MobileStickyCTA({
     <div className="fixed inset-x-0 bottom-0 z-raised border-t border-edge-subtle bg-surface-primary p-3 shadow-lg lg:hidden">
       <a
         href={href}
+        onClick={() => track(AnalyticsEvent.ctaClick, { location: "sticky" })}
         className="flex h-12 w-full items-center justify-center gap-2 rounded-button bg-action-primary text-base font-semibold text-content-inverse"
       >
         {label}

@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { site } from "@/config/site";
+import { track, AnalyticsEvent } from "@/lib/analytics/analytics";
 import { cn } from "@/lib/cn";
 import type { Dictionary } from "@/content/locales/types";
 
@@ -33,7 +34,10 @@ export function Faq({ dict }: { dict: Dictionary }) {
                       type="button"
                       aria-expanded={isOpen}
                       aria-controls={panelId}
-                      onClick={() => setOpen(isOpen ? null : i)}
+                      onClick={() => {
+                        if (!isOpen) track(AnalyticsEvent.faqOpen, { position: i + 1 });
+                        setOpen(isOpen ? null : i);
+                      }}
                       className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-content-primary transition-colors duration-base ease-standard hover:bg-surface-secondary focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus"
                     >
                       <span>{item.q}</span>

@@ -2,6 +2,8 @@ import { CalendarDays, Mail, MessageCircle, Phone, Send } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { TrackedLink } from "@/components/analytics/TrackedLink";
+import { AnalyticsEvent } from "@/lib/analytics/analytics";
 import { LeadForm } from "./LeadForm";
 import { site } from "@/config/site";
 import { contact } from "@/config/contact";
@@ -39,50 +41,60 @@ export async function CTA({ dict, locale }: { dict: Dictionary; locale: Locale }
               </h3>
               <p className="text-content-secondary">{cta.contactBody}</p>
               <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-                <a
+                <TrackedLink
                   href={contact.phone.href}
+                  event={AnalyticsEvent.contactButtonClick}
+                  eventProps={{ method: "phone" }}
                   className="inline-flex items-center gap-2 rounded-pill border border-edge-subtle bg-surface-secondary px-4 py-2 text-sm font-medium text-content-primary transition-colors duration-base ease-standard hover:border-edge-strong"
                 >
                   <Phone className="h-4 w-4 text-accent" aria-hidden="true" />
                   {contact.phone.label}
-                </a>
-                <a
+                </TrackedLink>
+                <TrackedLink
                   href={contact.email.href}
+                  event={AnalyticsEvent.contactButtonClick}
+                  eventProps={{ method: "email" }}
                   className="inline-flex items-center gap-2 rounded-pill border border-edge-subtle bg-surface-secondary px-4 py-2 text-sm font-medium text-content-primary transition-colors duration-base ease-standard hover:border-edge-strong"
                 >
                   <Mail className="h-4 w-4 text-accent" aria-hidden="true" />
                   {contact.email.label}
-                </a>
-                <a
+                </TrackedLink>
+                <TrackedLink
                   href={contact.telegram.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  event={AnalyticsEvent.contactButtonClick}
+                  eventProps={{ method: "telegram" }}
                   className="inline-flex items-center gap-2 rounded-pill border border-edge-subtle bg-surface-secondary px-4 py-2 text-sm font-medium text-content-primary transition-colors duration-base ease-standard hover:border-edge-strong"
                 >
                   <Send className="h-4 w-4 text-accent" aria-hidden="true" />
                   {contact.telegram.label}
-                </a>
-                <a
+                </TrackedLink>
+                <TrackedLink
                   href={contact.whatsapp.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  event={AnalyticsEvent.contactButtonClick}
+                  eventProps={{ method: "whatsapp" }}
                   className="inline-flex items-center gap-2 rounded-pill border border-edge-subtle bg-surface-secondary px-4 py-2 text-sm font-medium text-content-primary transition-colors duration-base ease-standard hover:border-edge-strong"
                 >
                   <MessageCircle className="h-4 w-4 text-accent" aria-hidden="true" />
                   {contact.whatsapp.label}
-                </a>
+                </TrackedLink>
               </div>
 
               {calendlyUrl ? (
-                <a
+                <TrackedLink
                   href={calendlyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  event={AnalyticsEvent.bookingClick}
+                  eventProps={{ provider: "calendly" }}
                   className="mt-1 inline-flex w-fit items-center gap-2 rounded-pill border border-edge-strong bg-accent-soft px-4 py-2 text-sm font-semibold text-content-primary transition-colors duration-base ease-standard hover:border-edge-strong"
                 >
                   <CalendarDays className="h-4 w-4 text-accent" aria-hidden="true" />
                   {dict.common.bookCall}
-                </a>
+                </TrackedLink>
               ) : null}
             </Reveal>
           </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { locales, localeLabels, type Locale } from "@/lib/i18n";
 import { setClientCookie } from "@/lib/clientCookie";
+import { track, AnalyticsEvent } from "@/lib/analytics/analytics";
 import { cn } from "@/lib/cn";
 
 /** Segmented control that swaps the leading /[locale] segment of the path. */
@@ -45,7 +46,12 @@ export function LanguageSwitcher({
             key={locale}
             href={hrefFor(locale)}
             hrefLang={locale}
-            onClick={() => setClientCookie("menq-locale", locale)}
+            onClick={() => {
+              setClientCookie("menq-locale", locale);
+              if (!active) {
+                track(AnalyticsEvent.languageSwitch, { from: current, to: locale });
+              }
+            }}
             aria-current={active ? "true" : undefined}
             className={cn(
               "rounded-pill px-3 py-1 text-xs font-semibold transition-colors duration-base ease-standard",

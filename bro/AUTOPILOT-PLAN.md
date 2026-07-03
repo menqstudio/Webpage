@@ -6,10 +6,6 @@
 
 ## PENDING
 
-- [ ] **Analytics wiring** — fire the 7 defined-but-unused events in `src/lib/analytics/analytics.ts`
-      (`cta_click`, `faq_open`, `language_switch`, `booking_click`, `contact_button_click`,
-      `lead_form_start`). Instrument the CTA buttons, FAQ accordion, LanguageSwitcher, Calendly/contact
-      buttons, and lead-form first-focus. Verify: events reach `dataLayer`/`gtag` (consent-gated).
 - [ ] **Auth niceties** — (a) 24h idle-timeout on sessions (track/refresh `lastActivity` in
       `src/lib/auth/session.ts`); (b) make invite + reset token single-use atomic via a conditional
       `updateMany({where:{id, acceptedAt/usedAt:null}})` + count check; (c) `writeAuditLog({action:"permission.denied"})`
@@ -31,6 +27,16 @@
 
 ## DONE
 
+- [x] **Analytics wiring (2026-07-03)** — wired 6 of the 7 defined-but-unused events, consent-gated by
+      design (gtag/dataLayer only exist after cookie consent). New client `TrackedLink` fires events from
+      server components without turning the tree client-side; extracted `buttonClasses` from `Button.tsx`
+      so tracked CTAs reuse the exact button tokens (no hardcode). Events: `cta_click` (Hero primary/secondary,
+      Header desktop+mobile, MobileStickyCTA — with a `location` prop), `contact_button_click` (phone/email/
+      telegram/whatsapp, `method` prop), `booking_click` (Calendly), `faq_open` (on open only, `position`),
+      `language_switch` (on actual switch only, `from`/`to`), `lead_form_start` (first form focus). Metadata
+      only — never PII. `service_card_click` left unused on purpose: service cards aren't navigational links,
+      so instrumenting them would add a click handler to a non-interactive element (a11y regression). Verify:
+      tsc ✅, eslint ✅, `npm test` 19/19 ✅, prod `next build` ✅.
 - [x] **Post-audit hardening pass (2026-07-02)** — 4-agent Fable-5 audit (public/admin/backend/gap), then
       fixed everything not blocked on owner data/secrets, on branch `autopilot/continue`, 4 local commits:
   - [x] **Batch 1 security** (`5f5e6aa`) — admin-tier privilege guards (invite/role-change/deactivate/reactivate);

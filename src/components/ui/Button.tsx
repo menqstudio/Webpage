@@ -25,6 +25,18 @@ const sizeMap: Record<Size, string> = {
   lg: "h-14 px-6 text-base",
 };
 
+/**
+ * Composes the button token classes. Exported so tracked/interactive links
+ * (e.g. TrackedLink) can render an identical button without duplicating tokens.
+ */
+export function buttonClasses(
+  variant: Variant = "primary",
+  size: Size = "md",
+  className?: string,
+): string {
+  return cn(base, variantMap[variant], sizeMap[size], className);
+}
+
 type CommonProps = {
   variant?: Variant;
   size?: Size;
@@ -40,10 +52,7 @@ export function Button({
   ...rest
 }: CommonProps & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button
-      className={cn(base, variantMap[variant], sizeMap[size], className)}
-      {...rest}
-    >
+    <button className={buttonClasses(variant, size, className)} {...rest}>
       {children}
     </button>
   );
@@ -57,10 +66,7 @@ export function ButtonLink({
   ...rest
 }: CommonProps & AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
-    <a
-      className={cn(base, variantMap[variant], sizeMap[size], className)}
-      {...rest}
-    >
+    <a className={buttonClasses(variant, size, className)} {...rest}>
       {children}
     </a>
   );
