@@ -100,7 +100,7 @@ export function Header({
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 lg:flex" aria-label={dict.nav.home}>
+          <nav className="hidden items-center gap-1 lg:flex" aria-label={dict.common.mainNavLabel}>
             {navItems.map((item) => (
               <a
                 key={item.key}
@@ -177,7 +177,7 @@ export function Header({
               </button>
             </div>
 
-            <nav className="flex flex-col gap-1" aria-label={dict.nav.home}>
+            <nav className="flex flex-col gap-1" aria-label={dict.common.mainNavLabel}>
               {navItems.map((item) => (
                 <a
                   key={item.key}

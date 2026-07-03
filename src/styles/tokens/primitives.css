@@ -34,6 +34,7 @@
   --font-family-display: var(--font-inter), var(--font-noto-armenian), system-ui,
     -apple-system, "Segoe UI", sans-serif;
 
+  --font-size-2xs: 0.7rem;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;

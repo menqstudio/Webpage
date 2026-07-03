@@ -49,6 +49,7 @@ const config: Config = {
         display: "var(--font-family-display)",
       },
       fontSize: {
+        "2xs": "var(--font-size-2xs)",
         xs: "var(--font-size-xs)",
         sm: "var(--font-size-sm)",
         base: "var(--font-size-md)",

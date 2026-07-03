@@ -23,7 +23,7 @@ export function HeroVisual({ dict }: { dict: Dictionary }) {
           </span>
           <span className="flex items-center gap-1.5 text-xs text-content-muted">
             <span className="h-2 w-2 rounded-pill bg-state-success" />
-            live
+            {v.liveLabel}
           </span>
         </div>
 
@@ -37,7 +37,7 @@ export function HeroVisual({ dict }: { dict: Dictionary }) {
               <div className="text-xl font-bold text-content-primary">
                 {m.value}
               </div>
-              <div className="mt-1 truncate text-[0.7rem] text-content-muted">
+              <div className="mt-1 truncate text-2xs text-content-muted">
                 {m.label}
               </div>
               <div className="mt-1 text-xs font-semibold text-accent">
@@ -103,7 +103,7 @@ export function HeroVisual({ dict }: { dict: Dictionary }) {
         <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2">
           {v.nodes.map((node, i) => (
             <span key={node} className="flex items-center gap-2">
-              <span className="rounded-pill border border-edge-subtle bg-surface-secondary px-2.5 py-1 text-[0.7rem] font-medium text-content-secondary">
+              <span className="rounded-pill border border-edge-subtle bg-surface-secondary px-2.5 py-1 text-2xs font-medium text-content-secondary">
                 {node}
               </span>
               {i < v.nodes.length - 1 ? (

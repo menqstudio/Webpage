@@ -6,10 +6,6 @@
 
 ## PENDING
 
-- [ ] **i18n/token hygiene** — wire the localized OG alt (`dict.meta.ogImageAlt`) in `opengraph-image.tsx`;
-      move the hero "live" chip + `HeroVisual` strings into the dictionary; add a `2xs` font-size token to
-      replace the `text-[0.7rem]` arbitraries; add a proper "Main navigation" aria-label key (both `<nav>`
-      landmarks reuse `nav.home`); remove/​wire dead keys `common.ctaSecondary`, `footer.builtNote`. Verify: tsc + build.
 - [ ] **Public a11y polish** — cookie banner `role="region"` + label (`CookieConsent.tsx`); move focus to the
       success heading on lead-form submit (`LeadForm.tsx`); render the skip-to-content link on legal pages too
       (`LegalPage.tsx`, it already has `main#main`). Verify: keyboard walkthrough + build.
@@ -23,6 +19,15 @@
 
 ## DONE
 
+- [x] **i18n/token hygiene (2026-07-03)** — localized OG `alt`: `opengraph-image.tsx` now uses
+      `generateImageMetadata({params})` (Next 16 API) reading `dict.meta.ogImageAlt` per locale, dropping the
+      static English `alt` (route now SSG-prerendered per locale). Tokenized the hero "live" chip →
+      `hero.visual.liveLabel` (HY «Օնլայն» / EN "Live" / RU «Онлайн»). New `2xs` font-size token
+      (`--font-size-2xs: 0.7rem` + tailwind `text-2xs`) replaces both `text-[0.7rem]` arbitraries in
+      `HeroVisual`. New `common.mainNavLabel` ("Main navigation") aria-label on both header `<nav>` landmarks
+      (were reusing `nav.home`). Removed dead keys `common.ctaSecondary` (dup of `hero.secondaryCta`) +
+      `footer.builtNote` from the type + all 3 locales. Verify: tsc ✅ (strict Dictionary type confirms
+      all 3 locales in sync), eslint ✅, `npm test` 24/24 ✅, prod `next build` ✅.
 - [x] **Auth niceties (2026-07-03)** — (a) **24h idle-timeout** done migration-free (no schema change, so no
       Gev-gated migrate): the existing `Session.expiresAt` is now a sliding idle deadline capped by the
       absolute max, derived from `createdAt`. New pure `sessionPolicy.ts` (`sessionExpiry`, env-driven at call

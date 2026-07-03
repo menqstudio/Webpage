@@ -1,8 +1,21 @@
 import { ImageResponse } from "next/og";
+import { getDictionary } from "@/content/dictionaries";
+import { isLocale, defaultLocale } from "@/lib/i18n";
 
-export const alt = "MenQ — AI automation and software solutions for business growth";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+// The card graphic is Latin-only and shared across HY/EN/RU, but its `alt`
+// (og:image:alt) is localized per locale from the dictionary.
+export async function generateImageMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const dict = getDictionary(isLocale(locale) ? locale : defaultLocale);
+  return [{ id: "default", alt: dict.meta.ogImageAlt, size, contentType }];
+}
 
 // Brand social card. Latin-only text so it renders with the built-in font
 // (no Armenian font fetch needed); used for HY/EN/RU shares alike.

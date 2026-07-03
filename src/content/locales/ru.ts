@@ -18,8 +18,8 @@ export const ru: Dictionary = {
   },
   common: {
     ctaPrimary: "Получить бесплатную консультацию",
-    ctaSecondary: "Посмотреть решения",
     bookCall: "Забронировать звонок",
+    mainNavLabel: "Основная навигация",
     languageLabel: "Язык",
     themeToggle: "Сменить тему",
     openMenu: "Открыть меню",
@@ -45,6 +45,7 @@ export const ru: Dictionary = {
       "Специалисты, развивающие квалификацию • AI-решения • CRM • Web • ERP • Automation • Dashboard",
     visual: {
       title: "Система управления бизнесом",
+      liveLabel: "Онлайн",
       metrics: [
         { label: "Активные лиды", value: "248", delta: "+18%" },
         { label: "Автоматизированные шаги", value: "1.4K", delta: "+32%" },
@@ -477,7 +478,6 @@ export const ru: Dictionary = {
     companyTitle: "Компания",
     contactTitle: "Контакты",
     rights: "Все права защищены.",
-    builtNote: "Создано для роста бизнеса.",
     legal: {
       privacy: "Политика конфиденциальности",
       terms: "Условия использования",

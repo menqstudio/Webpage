@@ -18,8 +18,8 @@ export const hy: Dictionary = {
   },
   common: {
     ctaPrimary: "Ստանալ անվճար խորհրդատվություն",
-    ctaSecondary: "Տեսնել լուծումները",
     bookCall: "Ամրագրել զանգ",
+    mainNavLabel: "Հիմնական նավիգացիա",
     languageLabel: "Լեզու",
     themeToggle: "Փոխել թեման",
     openMenu: "Բացել մենյուն",
@@ -45,6 +45,7 @@ export const hy: Dictionary = {
       "Որակավորումները զարգացնող մասնագետներ • ԱԲ լուծումներ • CRM • Web • ERP • Automation • Dashboard",
     visual: {
       title: "Բիզնեսի կառավարման համակարգ",
+      liveLabel: "Օնլայն",
       metrics: [
         { label: "Ակտիվ lead-եր", value: "248", delta: "+18%" },
         { label: "Ավտոմատացված քայլեր", value: "1.4K", delta: "+32%" },
@@ -479,7 +480,6 @@ export const hy: Dictionary = {
     companyTitle: "Ընկերություն",
     contactTitle: "Կապ",
     rights: "Բոլոր իրավունքները պաշտպանված են։",
-    builtNote: "Ստեղծված է բիզնեսի աճի համար։",
     legal: {
       privacy: "Գաղտնիության քաղաքականություն",
       terms: "Օգտագործման պայմաններ",

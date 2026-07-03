@@ -48,8 +48,8 @@ export type Dictionary = {
   };
   common: {
     ctaPrimary: string;
-    ctaSecondary: string;
     bookCall: string;
+    mainNavLabel: string;
     languageLabel: string;
     themeToggle: string;
     openMenu: string;
@@ -74,6 +74,7 @@ export type Dictionary = {
       metrics: { label: string; value: string; delta: string }[];
       pipelineLabel: string;
       pipeline: { label: string; status: string }[];
+      liveLabel: string;
       automationLabel: string;
       automationStatus: string;
       aiLabel: string;
@@ -184,7 +185,6 @@ export type Dictionary = {
     companyTitle: string;
     contactTitle: string;
     rights: string;
-    builtNote: string;
     legal: { privacy: string; terms: string; cookies: string };
   };
   legal: {

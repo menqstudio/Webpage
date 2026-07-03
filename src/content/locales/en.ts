@@ -18,8 +18,8 @@ export const en: Dictionary = {
   },
   common: {
     ctaPrimary: "Get a free consultation",
-    ctaSecondary: "See the solutions",
     bookCall: "Book a call",
+    mainNavLabel: "Main navigation",
     languageLabel: "Language",
     themeToggle: "Toggle theme",
     openMenu: "Open menu",
@@ -45,6 +45,7 @@ export const en: Dictionary = {
       "Specialists growing their qualifications • AI solutions • CRM • Web • ERP • Automation • Dashboard",
     visual: {
       title: "Business control system",
+      liveLabel: "Live",
       metrics: [
         { label: "Active leads", value: "248", delta: "+18%" },
         { label: "Automated steps", value: "1.4K", delta: "+32%" },
@@ -477,7 +478,6 @@ export const en: Dictionary = {
     companyTitle: "Company",
     contactTitle: "Contact",
     rights: "All rights reserved.",
-    builtNote: "Built for business growth.",
     legal: {
       privacy: "Privacy policy",
       terms: "Terms of use",
