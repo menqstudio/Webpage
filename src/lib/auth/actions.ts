@@ -187,6 +187,16 @@ export async function acceptInviteAction(
     return { error: t.errors.inviteInvalid };
   }
 
+  // Consume the invite atomically BEFORE touching the account, so two
+  // concurrent accepts can never both activate it. The winner gets count === 1.
+  const consumed = await db.inviteToken.updateMany({
+    where: { id: invite.id, acceptedAt: null, expiresAt: { gt: new Date() } },
+    data: { acceptedAt: new Date() },
+  });
+  if (consumed.count === 0) {
+    return { error: t.errors.inviteInvalid };
+  }
+
   const passwordHash = await hashPassword(password);
   const user = await db.user.upsert({
     where: { email: invite.email },
@@ -210,10 +220,6 @@ export async function acceptInviteAction(
     }
   }
 
-  await db.inviteToken.update({
-    where: { id: invite.id },
-    data: { acceptedAt: new Date() },
-  });
   await writeAuditLog({
     action: "auth.invite_accepted",
     entityType: "user",
@@ -278,12 +284,18 @@ export async function resetPasswordAction(
     return { error: t.errors.resetInvalid };
   }
 
-  const passwordHash = await hashPassword(password);
-  await db.user.update({ where: { id: prt.userId }, data: { passwordHash } });
-  await db.passwordResetToken.update({
-    where: { id: prt.id },
+  // Consume the token atomically BEFORE changing the password, so a replayed or
+  // concurrent submit of the same link can't reset twice. Winner gets count 1.
+  const consumed = await db.passwordResetToken.updateMany({
+    where: { id: prt.id, usedAt: null, expiresAt: { gt: new Date() } },
     data: { usedAt: new Date() },
   });
+  if (consumed.count === 0) {
+    return { error: t.errors.resetInvalid };
+  }
+
+  const passwordHash = await hashPassword(password);
+  await db.user.update({ where: { id: prt.userId }, data: { passwordHash } });
   await invalidateUserSessions(prt.userId); // reset invalidates all sessions
   await writeAuditLog({
     action: "auth.password_reset_completed",

@@ -2,7 +2,8 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getPrisma } from "@/lib/db/prisma";
-import { SESSION_COOKIE, hashToken } from "./session";
+import { SESSION_COOKIE, hashToken, refreshSessionActivity } from "./session";
+import { writeAuditLog } from "./audit";
 
 export type CurrentUser = {
   id: string;
@@ -53,6 +54,9 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const user = session.user;
   if (user.status !== "ACTIVE") return null;
 
+  // Slide the idle-timeout deadline forward (throttled; never throws).
+  await refreshSessionActivity(session);
+
   const roleKeys = user.roles.map((ur) => ur.role.key);
   const permissions = new Set<string>();
   for (const ur of user.roles) {
@@ -102,6 +106,12 @@ export async function requireUser(loginPath = "/admin/login"): Promise<CurrentUs
 export async function requirePermission(permission: string): Promise<CurrentUser> {
   const user = await requireUser();
   if (!userHasPermission(user, permission)) {
+    await writeAuditLog({
+      actorUserId: user.id,
+      action: "permission.denied",
+      entityType: "permission",
+      metadata: { required: permission },
+    });
     redirect("/admin/forbidden");
   }
   return user;
@@ -113,6 +123,12 @@ export async function requireAnyPermission(
 ): Promise<CurrentUser> {
   const user = await requireUser();
   if (!userHasAnyPermission(user, permissions)) {
+    await writeAuditLog({
+      actorUserId: user.id,
+      action: "permission.denied",
+      entityType: "permission",
+      metadata: { requiredAny: permissions },
+    });
     redirect("/admin/forbidden");
   }
   return user;

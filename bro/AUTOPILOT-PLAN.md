@@ -6,10 +6,6 @@
 
 ## PENDING
 
-- [ ] **Auth niceties** — (a) 24h idle-timeout on sessions (track/refresh `lastActivity` in
-      `src/lib/auth/session.ts`); (b) make invite + reset token single-use atomic via a conditional
-      `updateMany({where:{id, acceptedAt/usedAt:null}})` + count check; (c) `writeAuditLog({action:"permission.denied"})`
-      before the redirect in `requirePermission`/`requireAnyPermission` (`src/lib/auth/rbac.ts`). Add unit tests.
 - [ ] **i18n/token hygiene** — wire the localized OG alt (`dict.meta.ogImageAlt`) in `opengraph-image.tsx`;
       move the hero "live" chip + `HeroVisual` strings into the dictionary; add a `2xs` font-size token to
       replace the `text-[0.7rem]` arbitraries; add a proper "Main navigation" aria-label key (both `<nav>`
@@ -27,6 +23,18 @@
 
 ## DONE
 
+- [x] **Auth niceties (2026-07-03)** — (a) **24h idle-timeout** done migration-free (no schema change, so no
+      Gev-gated migrate): the existing `Session.expiresAt` is now a sliding idle deadline capped by the
+      absolute max, derived from `createdAt`. New pure `sessionPolicy.ts` (`sessionExpiry`, env-driven at call
+      time) + `refreshSessionActivity` in `session.ts` that slides the deadline on activity, throttled to one
+      write per ~5min; `getCurrentUser` calls it. New `SESSION_IDLE_TIMEOUT` env (default 86400s) documented
+      in `.env.example` + ENV_AND_SECRETS. (b) **Single-use atomic tokens**: invite + reset now consume via a
+      conditional `updateMany({where:{id, acceptedAt/usedAt:null, expiresAt:{gt:now}}})` + `count===0` guard
+      *before* mutating the account/password, so concurrent/replayed submits can't double-apply. (c)
+      **`permission.denied` audit**: `requirePermission`/`requireAnyPermission` now `writeAuditLog` (with the
+      required permission in metadata) before redirecting to /admin/forbidden. Added 5 unit tests for the
+      session-lifetime policy (idle window, absolute cap clamp, env overrides, invalid-env fallback). Verify:
+      tsc ✅, eslint ✅, `npm test` 24/24 ✅, prod `next build` ✅.
 - [x] **Analytics wiring (2026-07-03)** — wired 6 of the 7 defined-but-unused events, consent-gated by
       design (gtag/dataLayer only exist after cookie consent). New client `TrackedLink` fires events from
       server components without turning the tree client-side; extracted `buttonClasses` from `Button.tsx`

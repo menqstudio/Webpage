@@ -2,10 +2,13 @@ import { cookies } from "next/headers";
 import { randomBytes, createHash } from "crypto";
 import { getPrisma } from "@/lib/db/prisma";
 import { SESSION_COOKIE } from "./cookies";
+import {
+  sessionExpiry,
+  sessionMaxAgeS,
+  SESSION_REFRESH_THRESHOLD_S,
+} from "./sessionPolicy";
 
 export { SESSION_COOKIE };
-
-const SESSION_MAX_AGE_S = Number(process.env.SESSION_MAX_AGE ?? 60 * 60 * 24 * 7);
 
 export function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
@@ -20,7 +23,8 @@ export async function createSession(
   if (!db) throw new Error("DATABASE_URL not configured");
 
   const token = randomBytes(32).toString("hex");
-  const expiresAt = new Date(Date.now() + SESSION_MAX_AGE_S * 1000);
+  const now = Date.now();
+  const expiresAt = sessionExpiry(now, new Date(now));
 
   await db.session.create({
     data: {
@@ -38,8 +42,39 @@ export async function createSession(
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: SESSION_MAX_AGE_S,
+    // Cookie lives for the absolute cap; the server-side `expiresAt` enforces
+    // the (shorter) idle timeout as the source of truth.
+    maxAge: sessionMaxAgeS(),
   });
+}
+
+/**
+ * Slides a valid session's idle deadline forward on activity. Skips the write
+ * unless the deadline has drifted past the refresh threshold, so most requests
+ * incur no extra DB write. Never throws.
+ */
+export async function refreshSessionActivity(session: {
+  id: string;
+  createdAt: Date;
+  expiresAt: Date;
+}): Promise<void> {
+  const db = getPrisma();
+  if (!db) return;
+  const next = sessionExpiry(Date.now(), session.createdAt);
+  if (
+    next.getTime() - session.expiresAt.getTime() <
+    SESSION_REFRESH_THRESHOLD_S * 1000
+  ) {
+    return; // already at/near the cap, or refreshed recently
+  }
+  try {
+    await db.session.update({
+      where: { id: session.id },
+      data: { expiresAt: next },
+    });
+  } catch {
+    /* activity refresh must never break the request */
+  }
 }
 
 /** Deletes the current session row and clears the cookie. */
