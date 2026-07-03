@@ -6,9 +6,7 @@
 
 ## PENDING
 
-- [ ] **Notification retry action** — the `RETRY_PENDING` enum is modeled but unused. Add an admin server
-      action that re-sends Email+Telegram for a failed/pending lead and updates `notificationStatus`
-      (reuse the createLead notify pipeline); surface a "Resend" button on the lead detail page. Permission-gated + audited.
+_(none — all queued items landed; the branch is ready for Gev to review + push.)_
 
 > Bigger / needs-a-decision (NOT autopilot-bounded — flag to Gev): distributed rate limiter
 > (Redis/Upstash or Turnstile) for true multi-instance serverless; native public booking form;
@@ -16,6 +14,15 @@
 
 ## DONE
 
+- [x] **Notification retry action (2026-07-03)** — new `resendLeadNotifications(leadId)` helper
+      (`src/lib/leads/notify.ts`) reuses the createLead notify pipeline (exported `resolveNotificationStatus`
+      + the same Email/Telegram senders): flips the lead to **RETRY_PENDING** for the send window (the enum's
+      first real use), re-sends both channels, then writes the resolved `notificationStatus` + fresh
+      `LeadNotificationLog` rows + a `lead.notify_retried` event. New `resendLeadNotificationAction` server
+      action, gated by `leads.update` + audited (`lead.notification_resent`, resolved status in newValue).
+      "Resend notification" button surfaces on the lead detail Delivery panel when the caller has the
+      permission and status isn't `BOTH_SENT` (new HY/EN admin string `leadDetail.resendNotification`).
+      Verify: tsc ✅, eslint ✅, `npm test` 24/24 ✅, prod `next build` ✅.
 - [x] **Public a11y polish (2026-07-03)** — cookie banner is now a labelled `role="region"`
       (new `common.cookieRegionLabel` key, 3 locales, passed from layout). Lead-form success moves focus to
       its confirmation heading (`tabIndex={-1}` + focus-visible ring + `useEffect` on status). Skip-to-content

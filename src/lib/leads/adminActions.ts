@@ -5,6 +5,7 @@ import { getPrisma } from "@/lib/db/prisma";
 import { requirePermission } from "@/lib/auth/rbac";
 import { writeAuditLog } from "@/lib/auth/audit";
 import { ignoreMissingRecord } from "@/lib/errors";
+import { resendLeadNotifications } from "./notify";
 import { LEAD_STATUSES } from "./constants";
 
 export async function updateLeadStatusAction(formData: FormData): Promise<void> {
@@ -95,6 +96,27 @@ export async function assignLeadAction(formData: FormData): Promise<void> {
     newValue: assignedToId || null,
   });
   revalidatePath("/admin/leads");
+  revalidatePath(`/admin/leads/${id}`);
+}
+
+export async function resendLeadNotificationAction(
+  formData: FormData,
+): Promise<void> {
+  const actor = await requirePermission("leads.update");
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+
+  const result = await resendLeadNotifications(id);
+  if (!result.ok) return;
+
+  await writeAuditLog({
+    actorUserId: actor.id,
+    actorRole: actor.roles[0],
+    action: "lead.notification_resent",
+    entityType: "lead",
+    entityId: id,
+    newValue: result.notificationStatus,
+  });
   revalidatePath(`/admin/leads/${id}`);
 }
 

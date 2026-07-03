@@ -124,6 +124,7 @@ export const adminHy = {
     assign: "Նշանակել",
     delivery: "Առաքում",
     notification: "Ծանուցում",
+    resendNotification: "Կրկին ուղարկել ծանուցումը",
     consent: "Համաձայնություն",
     yes: "Այո",
     no: "Ոչ",

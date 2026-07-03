@@ -7,6 +7,7 @@ import {
   addLeadNoteAction,
   archiveLeadAction,
   assignLeadAction,
+  resendLeadNotificationAction,
 } from "@/lib/leads/adminActions";
 import { LEAD_STATUSES } from "@/lib/leads/constants";
 import { solutionLabel } from "@/lib/content/solutionLabel";
@@ -49,6 +50,7 @@ export default async function LeadDetailPage({
   const canNote = userHasPermission(user, "leads.add_note");
   const canArchive = userHasPermission(user, "leads.archive");
   const canAssign = userHasPermission(user, "leads.assign");
+  const canResend = userHasPermission(user, "leads.update");
 
   const assignableUsers = canAssign
     ? await db.user.findMany({
@@ -228,6 +230,17 @@ export default async function LeadDetailPage({
               />
               <Field label={t.leadDetail.utmSource} value={lead.utmSource ?? undefined} />
             </dl>
+            {canResend && lead.notificationStatus !== "BOTH_SENT" ? (
+              <form action={resendLeadNotificationAction} className="mt-4">
+                <input type="hidden" name="id" value={lead.id} />
+                <button
+                  type="submit"
+                  className="w-full rounded-pill border border-edge-strong bg-surface-secondary px-4 py-2 text-sm font-semibold text-content-primary transition-colors duration-base ease-standard hover:border-edge-strong hover:bg-surface-primary"
+                >
+                  {t.leadDetail.resendNotification}
+                </button>
+              </form>
+            ) : null}
           </Panel>
         </div>
       </div>

@@ -125,6 +125,7 @@ export const adminEn: AdminDictionary = {
     assign: "Assign",
     delivery: "Delivery",
     notification: "Notification",
+    resendNotification: "Resend notification",
     consent: "Consent",
     yes: "Yes",
     no: "No",

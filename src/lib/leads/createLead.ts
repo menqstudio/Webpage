@@ -15,7 +15,7 @@ export type CreateLeadResult = {
 
 const DUPLICATE_WINDOW_MS = 24 * 60 * 60 * 1000;
 
-function resolveNotificationStatus(results: ChannelResult[]): string {
+export function resolveNotificationStatus(results: ChannelResult[]): string {
   const email = results.find((r) => r.channel === "email")!;
   const telegram = results.find((r) => r.channel === "telegram")!;
   const sent = results.filter((r) => r.outcome === "sent").length;
