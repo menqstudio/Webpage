@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SkipLink } from "@/components/layout/SkipLink";
 import { Section } from "@/components/layout/Section";
 import { Container } from "@/components/ui/Container";
 import type { Locale } from "@/lib/i18n";
@@ -19,6 +20,7 @@ export function LegalPage({
 }) {
   return (
     <>
+      <SkipLink label={dict.common.skipToContent} />
       <Header dict={dict} locale={locale} />
       <main id="main">
         <Section variant="base" spacing="lg">

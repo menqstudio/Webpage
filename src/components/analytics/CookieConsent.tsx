@@ -7,12 +7,14 @@ import type { Locale } from "@/lib/i18n";
 
 export function CookieConsent({
   locale,
+  regionLabel,
   notice,
   accept,
   decline,
   policyLabel,
 }: {
   locale: Locale;
+  regionLabel: string;
   notice: string;
   accept: string;
   decline: string;
@@ -26,7 +28,11 @@ export function CookieConsent({
   }
 
   return (
-    <div className="fixed inset-x-4 bottom-4 z-toast mx-auto max-w-2xl">
+    <div
+      role="region"
+      aria-label={regionLabel}
+      className="fixed inset-x-4 bottom-4 z-toast mx-auto max-w-2xl"
+    >
       <div className="glass flex flex-col gap-3 rounded-card p-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-content-secondary">
           {notice}{" "}

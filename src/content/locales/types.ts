@@ -56,6 +56,7 @@ export type Dictionary = {
     closeMenu: string;
     skipToContent: string;
     backToHome: string;
+    cookieRegionLabel: string;
     cookieNotice: string;
     cookieAccept: string;
     cookieDecline: string;

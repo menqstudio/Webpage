@@ -26,6 +26,7 @@ export const en: Dictionary = {
     closeMenu: "Close menu",
     skipToContent: "Skip to content",
     backToHome: "Back to home",
+    cookieRegionLabel: "Cookie consent",
     cookieNotice:
       "We use cookies to improve site functionality and analytics.",
     cookieAccept: "Accept",

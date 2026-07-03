@@ -26,6 +26,7 @@ export const hy: Dictionary = {
     closeMenu: "Փակել մենյուն",
     skipToContent: "Անցնել բովանդակությանը",
     backToHome: "Վերադառնալ գլխավոր",
+    cookieRegionLabel: "Cookie-ների համաձայնություն",
     cookieNotice:
       "Օգտագործում ենք cookie-ներ՝ կայքի աշխատանքը և անալիտիկան բարելավելու համար։",
     cookieAccept: "Ընդունել",

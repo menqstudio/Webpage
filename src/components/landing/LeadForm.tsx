@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { FormField, SelectField, TextAreaField } from "@/components/ui/FormField";
 import { Button } from "@/components/ui/Button";
@@ -34,6 +34,7 @@ export function LeadForm({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const started = useRef(false);
+  const successHeadingRef = useRef<HTMLHeadingElement>(null);
 
   // Fire once, when the visitor first engages with the form.
   function onFirstInteraction() {
@@ -41,6 +42,12 @@ export function LeadForm({
     started.current = true;
     track(AnalyticsEvent.leadFormStart, { language: locale });
   }
+
+  // On success the form is replaced by a confirmation — move focus to its
+  // heading so screen-reader + keyboard users land on the new content.
+  useEffect(() => {
+    if (status === "success") successHeadingRef.current?.focus();
+  }, [status]);
 
   function update<K extends keyof typeof emptyValues>(
     key: K,
@@ -114,7 +121,11 @@ export function LeadForm({
         <span className="inline-flex h-14 w-14 items-center justify-center rounded-pill bg-accent-soft text-accent">
           <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
         </span>
-        <h3 className="text-xl font-bold text-content-primary">
+        <h3
+          ref={successHeadingRef}
+          tabIndex={-1}
+          className="text-xl font-bold text-content-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        >
           {f.successTitle}
         </h3>
         <p className="leading-relaxed text-content-secondary">{f.successBody}</p>

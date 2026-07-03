@@ -3,6 +3,7 @@ import { getDictionary } from "@/content/dictionaries";
 import { isLocale } from "@/lib/i18n";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SkipLink } from "@/components/layout/SkipLink";
 import { Hero } from "@/components/landing/Hero";
 import { Pain } from "@/components/landing/Pain";
 import { SolutionOverview } from "@/components/landing/SolutionOverview";
@@ -33,12 +34,7 @@ export default async function LandingPage({
 
   return (
     <>
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-toast focus:rounded-lg focus:bg-action-primary focus:px-4 focus:py-2 focus:text-content-inverse"
-      >
-        {dict.common.skipToContent}
-      </a>
+      <SkipLink label={dict.common.skipToContent} />
 
       <Header dict={dict} locale={locale} />
 

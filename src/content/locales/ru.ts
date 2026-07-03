@@ -26,6 +26,7 @@ export const ru: Dictionary = {
     closeMenu: "Закрыть меню",
     skipToContent: "Перейти к содержимому",
     backToHome: "На главную",
+    cookieRegionLabel: "Согласие на использование cookie",
     cookieNotice:
       "Мы используем cookie для улучшения работы сайта и аналитики.",
     cookieAccept: "Принять",

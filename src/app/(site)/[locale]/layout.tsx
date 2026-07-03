@@ -60,6 +60,7 @@ export default async function LocaleLayout({
         {showConsent ? (
           <CookieConsent
             locale={locale}
+            regionLabel={dict.common.cookieRegionLabel}
             notice={dict.common.cookieNotice}
             accept={dict.common.cookieAccept}
             decline={dict.common.cookieDecline}

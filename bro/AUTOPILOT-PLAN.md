@@ -6,9 +6,6 @@
 
 ## PENDING
 
-- [ ] **Public a11y polish** — cookie banner `role="region"` + label (`CookieConsent.tsx`); move focus to the
-      success heading on lead-form submit (`LeadForm.tsx`); render the skip-to-content link on legal pages too
-      (`LegalPage.tsx`, it already has `main#main`). Verify: keyboard walkthrough + build.
 - [ ] **Notification retry action** — the `RETRY_PENDING` enum is modeled but unused. Add an admin server
       action that re-sends Email+Telegram for a failed/pending lead and updates `notificationStatus`
       (reuse the createLead notify pipeline); surface a "Resend" button on the lead detail page. Permission-gated + audited.
@@ -19,6 +16,11 @@
 
 ## DONE
 
+- [x] **Public a11y polish (2026-07-03)** — cookie banner is now a labelled `role="region"`
+      (new `common.cookieRegionLabel` key, 3 locales, passed from layout). Lead-form success moves focus to
+      its confirmation heading (`tabIndex={-1}` + focus-visible ring + `useEffect` on status). Skip-to-content
+      link now renders on legal pages too: extracted a shared `SkipLink` component (targets `#main`) and used
+      it on both the homepage and `LegalPage`. Verify: tsc ✅, eslint ✅, `npm test` 24/24 ✅, prod build ✅.
 - [x] **i18n/token hygiene (2026-07-03)** — localized OG `alt`: `opengraph-image.tsx` now uses
       `generateImageMetadata({params})` (Next 16 API) reading `dict.meta.ogImageAlt` per locale, dropping the
       static English `alt` (route now SSG-prerendered per locale). Tokenized the hero "live" chip →
