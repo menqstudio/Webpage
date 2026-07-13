@@ -1,6 +1,6 @@
 # MenQ Webpage — MenQ Standard Governance Package / MenQ Webpage — MenQ Standard կառավարման փաթեթ
 
-**Status / Կարգավիճակ:** Draft — Audit and adoption in progress / Draft — Audit և adoption ընթացքի մեջ  
+**Status / Կարգավիճակ:** YELLOW — static remediation complete, execution evidence pending / YELLOW — static remediation-ը ավարտված է, execution evidence-ը սպասվում է  
 **Owner / Պատասխանատու:** Gevorg Ohanyan, MenQ Owner  
 **Parent standard:** `menqstudio/MenQ-Standard`  
 **Design Platform authority:** Locked `D-025`
@@ -17,6 +17,7 @@
 - `VALIDATION_PLAN.md` — required validators/checks/evidence։
 - `MIGRATION_AND_ROLLBACK_PLAN.md` — safe migration և exit/rollback։
 - `COMPONENT_AND_PAGE_INVENTORY.md` — routes, sections, primitives և gaps։
+- `FINAL_VALIDATION_RECORD.md` — current evidence և honest YELLOW verdict։
 - `decisions/DECISION_INDEX.md` — Webpage-local decisions։
 - `evidence/adoption-record.json` — machine-readable state։
 
@@ -42,6 +43,7 @@ This directory is the canonical governance and Design Platform adoption package 
 - `VALIDATION_PLAN.md` — required validators, checks, and evidence.
 - `MIGRATION_AND_ROLLBACK_PLAN.md` — safe migration and exit/rollback.
 - `COMPONENT_AND_PAGE_INVENTORY.md` — routes, sections, primitives, and gaps.
+- `FINAL_VALIDATION_RECORD.md` — current evidence and honest YELLOW verdict.
 - `decisions/DECISION_INDEX.md` — Webpage-local decisions.
 - `evidence/adoption-record.json` — machine-readable state.
 
