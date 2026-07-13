@@ -1,8 +1,10 @@
-/* Design tokens — must load before Tailwind so variables resolve everywhere. */
+/* Design-token dependency order:
+   primitive/reference → semantic → component → motion → product extension → pattern. */
 @import "../styles/tokens/primitives.css";
 @import "../styles/tokens/semantic.css";
 @import "../styles/tokens/components.css";
 @import "../styles/tokens/motion.css";
+@import "../styles/tokens/product-extension.css";
 @import "../styles/tokens/sections.css";
 
 @tailwind base;
@@ -48,7 +50,7 @@
 }
 
 @layer utilities {
-  /* Decorative dotted/line grid background driven by tokens. */
+  /* Decorative dotted/line grid background driven by Product Extension tokens. */
   .bg-grid {
     background-image: linear-gradient(
         to right,
@@ -63,7 +65,7 @@
     background-image: var(--gradient-hero);
   }
 
-  /* Glass surface used in dark/futuristic sections. */
+  /* Product-local glass surface used in dark/futuristic sections. */
   .glass {
     background-color: var(--glass-bg);
     border: 1px solid var(--glass-border-color);
