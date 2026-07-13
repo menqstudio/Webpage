@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json,sys
+import json,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 errors=[]
@@ -27,7 +27,12 @@ for rel in canonical:
 invp=ROOT/'docs/menq-standard/evidence/markdown-inventory.json'
 try: inv=json.loads(invp.read_text(encoding='utf-8'))
 except Exception as e: errors.append(f'Invalid markdown inventory: {e}'); inv={}
-actual=sorted(p.relative_to(ROOT).as_posix() for p in ROOT.rglob('*.md'))
+try:
+ output=subprocess.check_output(['git','ls-files','--','*.md','*.MD'],cwd=ROOT,text=True)
+ actual=sorted(line for line in output.splitlines() if line)
+except (OSError,subprocess.CalledProcessError) as e:
+ errors.append(f'Unable to enumerate tracked Markdown with git ls-files: {e}')
+ actual=[]
 if inv:
  if inv.get('fileCount')!=len(actual): errors.append(f'Inventory count mismatch: {inv.get("fileCount")} != {len(actual)}')
  rows=[r.get('path') for r in inv.get('files',[])]
