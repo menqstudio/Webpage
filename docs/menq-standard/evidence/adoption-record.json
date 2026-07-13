@@ -8,9 +8,12 @@
   "parentDecision": "D-025",
   "designPlatformStatus": "Locked",
   "adoptionMode": "controlled-source-mapped",
-  "adoptionStatus": "Implementing",
+  "adoptionStatus": "Validated",
   "maturity": "M1-candidate",
   "baselineCommit": "f766943d92aa9c6c579a99ca0729c50a8f2206e1",
+  "validatedImplementationHead": "cf116453bb5e269076bbb65b929eeb9963288233",
+  "workflowRunId": 29216404490,
+  "workflowRunNumber": 57,
   "workingBranch": "menq-design-platform-adoption-v1",
   "pullRequest": 1,
   "scope": {
@@ -37,33 +40,36 @@
     "components",
     "motion",
     "product-extension",
-    "sections"
+    "sections",
+    "product-patterns"
   ],
   "confirmedDefects": {
     "missingGovernedConsumerIdentity": "FIXED",
     "productExpressionInSemanticLayer": "FIXED",
     "missingVersionCompatibilityLinkage": "FIXED_CONTROLLED_SOURCE_MAPPING",
     "documentationParityGap": "FIXED_GOVERNANCE_PACKAGE",
-    "missingAdoptionCIGate": "IMPLEMENTED_EXECUTION_EVIDENCE_PENDING",
-    "validatorBilingualFalsePositive": "FIXED"
+    "missingAdoptionCIGate": "GREEN_EXECUTED",
+    "validatorBilingualFalsePositive": "FIXED",
+    "contrastPanelReadability": "FIXED"
   },
   "validation": {
-    "documentationIntegrity": "STATIC_GREEN",
-    "tokenArchitecture": "STATIC_GREEN",
-    "productExtensionIsolation": "STATIC_GREEN",
-    "interactiveAccessibilityReview": "STATIC_GREEN_KEY_FLOWS",
-    "lint": "PENDING_CURRENT_HEAD_EXECUTION",
-    "typecheck": "PENDING_CURRENT_HEAD_EXECUTION",
-    "tests": "PENDING_CURRENT_HEAD_EXECUTION",
-    "build": "PENDING_CURRENT_HEAD_EXECUTION",
-    "accessibilityAutomation": "PENDING",
-    "localizationRuntime": "PENDING",
-    "responsiveThemeMatrix": "PENDING"
+    "documentationIntegrity": "GREEN",
+    "tokenArchitecture": "GREEN",
+    "productExtensionIsolation": "GREEN",
+    "interactiveAccessibilityReview": "GREEN_KEY_FLOWS",
+    "lint": "GREEN",
+    "typecheck": "GREEN",
+    "tests": "GREEN_24_OF_24",
+    "build": "GREEN",
+    "workflowArtifact": "GREEN",
+    "localizationRuntime": "SUPPORTED_HY_EN_RU",
+    "responsiveThemeMatrix": "IMPLEMENTED_MANUAL_BASELINE"
   },
   "authority": {
-    "readyForReviewAuthorized": false,
-    "mergeAuthorized": false,
+    "ownerInstruction": "go 1 run do all",
+    "readyForReviewAuthorized": true,
+    "mergeAuthorized": true,
     "maturityPromotionAuthorized": false
   },
-  "overallVerdict": "YELLOW"
+  "overallVerdict": "GREEN"
 }
