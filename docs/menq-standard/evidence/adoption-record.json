@@ -12,10 +12,10 @@
   "maturity": "M1-candidate",
   "baselineCommit": "f766943d92aa9c6c579a99ca0729c50a8f2206e1",
   "validatedImplementationHead": "ae4ef9519d9e9286d45440ffff4c1e83d02afaf1",
-  "workflowRunId": 29216404490,
-  "workflowRunNumber": 57,
-  "workingBranch": "menq-design-platform-adoption-v1",
-  "pullRequest": 1,
+  "implementationPullRequest": 1,
+  "implementationMergeCommit": "d985a5718ed7ec47717fdf271d14580e8eb947cb",
+  "implementationWorkflowRunId": 29216524360,
+  "implementationWorkflowRunNumber": 63,
   "scope": {
     "designTokens": true,
     "components": true,
@@ -50,7 +50,8 @@
     "documentationParityGap": "FIXED_GOVERNANCE_PACKAGE",
     "missingAdoptionCIGate": "GREEN_EXECUTED",
     "validatorBilingualFalsePositive": "FIXED",
-    "contrastPanelReadability": "FIXED"
+    "contrastPanelReadability": "FIXED",
+    "generatedArtifactInventoryDoubleCount": "FIXED_GIT_TRACKED_ENUMERATION"
   },
   "validation": {
     "documentationIntegrity": "GREEN",
@@ -65,24 +66,27 @@
     "localizationRuntime": "SUPPORTED_HY_EN_RU",
     "responsiveThemeMatrix": "IMPLEMENTED_MANUAL_BASELINE"
   },
-  "authority": {
-    "ownerInstruction": "go 1 run do all",
-    "readyForReviewAuthorized": true,
-    "mergeAuthorized": true,
-    "maturityPromotionAuthorized": false,
-    "documentationScopeInstruction": "դե թղթերը դզի, բայց նայ սիրուն սաղ ավելացրու որը չկա, երկու լեզվով, մանրամասն, ոնց ստանդարտինը արեցինք",
-    "documentationMergeAuthorized": false
-  },
-  "overallVerdict": "GREEN_IMPLEMENTATION_DOCUMENTATION_CLOSURE_CANDIDATE",
-  "implementationWorkflowRunId": 29216524360,
-  "implementationWorkflowRunNumber": 63,
-  "mergeCommit": "d985a5718ed7ec47717fdf271d14580e8eb947cb",
   "documentationClosure": {
-    "status": "Candidate",
+    "status": "ValidatedAwaitingOwnerMerge",
     "branch": "menq-webpage-post-merge-closure",
+    "pullRequest": 2,
+    "validatedContentHead": "5584119831acf3b2b92e7efe392b16b8b491f011",
+    "workflowRunId": 29220537035,
+    "workflowRunNumber": 73,
     "runtimeCodeChanged": false,
     "mergeAuthorized": false,
     "canonicalMarkdownCount": 41,
-    "totalMarkdownCount": 104
-  }
+    "totalMarkdownCount": 104,
+    "inventoryModel": "canonical-path-set-and-count-plus-CI-byte-sha256-manifest"
+  },
+  "authority": {
+    "implementationOwnerInstruction": "go 1 run do all",
+    "implementationMergeAuthorized": true,
+    "documentationScopeInstruction": "դե թղթերը դզի, բայց նայ սիրուն սաղ ավելացրու որը չկա, երկու լեզվով, մանրամասն, ոնց ստանդարտինը արեցինք",
+    "documentationMergeAuthorized": false,
+    "maturityPromotionAuthorized": false
+  },
+  "overallVerdict": "GREEN_IMPLEMENTATION_GREEN_DOCUMENTATION_AWAITING_OWNER_MERGE",
+  "pullRequest": 1,
+  "mergeCommit": "d985a5718ed7ec47717fdf271d14580e8eb947cb"
 }
