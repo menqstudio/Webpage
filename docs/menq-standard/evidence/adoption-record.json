@@ -40,22 +40,24 @@
     "sections"
   ],
   "confirmedDefects": {
-    "missingGovernedConsumerIdentity": "remediating",
-    "productExpressionInSemanticLayer": "remediating",
-    "missingVersionCompatibilityLinkage": "remediating",
-    "documentationParityGap": "remediating",
-    "missingAdoptionCIGate": "remediating"
+    "missingGovernedConsumerIdentity": "FIXED",
+    "productExpressionInSemanticLayer": "FIXED",
+    "missingVersionCompatibilityLinkage": "FIXED_CONTROLLED_SOURCE_MAPPING",
+    "documentationParityGap": "FIXED_GOVERNANCE_PACKAGE",
+    "missingAdoptionCIGate": "IMPLEMENTED_EXECUTION_EVIDENCE_PENDING",
+    "validatorBilingualFalsePositive": "FIXED"
   },
   "validation": {
-    "documentationIntegrity": "PENDING",
-    "tokenArchitecture": "PENDING",
-    "productExtensionIsolation": "PENDING",
-    "lint": "PENDING",
-    "typecheck": "PENDING",
-    "tests": "PENDING",
-    "build": "PENDING",
-    "accessibility": "PENDING",
-    "localization": "PENDING",
+    "documentationIntegrity": "STATIC_GREEN",
+    "tokenArchitecture": "STATIC_GREEN",
+    "productExtensionIsolation": "STATIC_GREEN",
+    "interactiveAccessibilityReview": "STATIC_GREEN_KEY_FLOWS",
+    "lint": "PENDING_CURRENT_HEAD_EXECUTION",
+    "typecheck": "PENDING_CURRENT_HEAD_EXECUTION",
+    "tests": "PENDING_CURRENT_HEAD_EXECUTION",
+    "build": "PENDING_CURRENT_HEAD_EXECUTION",
+    "accessibilityAutomation": "PENDING",
+    "localizationRuntime": "PENDING",
     "responsiveThemeMatrix": "PENDING"
   },
   "authority": {
