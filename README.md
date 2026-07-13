@@ -1,104 +1,50 @@
 # MenQ Webpage
 
-**Status / Կարգավիճակ:** Design Platform visual implementation complete — final CI pending / Design Platform visual implementation-ն ավարտված է — final CI-ն սպասվում է  
-**Repository:** `menqstudio/Webpage`  
-**Canonical parent:** `menqstudio/MenQ-Standard`  
-**Design authority:** Locked `D-025`  
-**Branch:** `menq-design-platform-adoption-v1`  
-**PR:** `#1`
+> **HY**  
+> MenQ-ի public business website-ը և lead-generation product-ը։  
+> **EN**  
+> MenQ's public business website and lead-generation product.
 
-## Հայերեն
+## Status / Կարգավիճակ
 
-MenQ Webpage-ը MenQ Studio-ի public business website և lead-generation product-ն է՝ HY/EN/RU public surface, leads/bookings և invite-only admin panel-ով։
+- **Implementation:** merged and GREEN / merge արված և GREEN
+- **Design Platform authority:** Locked `D-025`
+- **Implementation PR:** `#1`
+- **Implementation merge:** `d985a5718ed7ec47717fdf271d14580e8eb947cb`
+- **Validated head:** `ae4ef9519d9e9286d45440ffff4c1e83d02afaf1`
+- **Adoption maturity:** `M1-candidate`
+- **Languages:** Armenian + English canonical; Russian product locale
+- **Owner:** Gevorg Ohanyan
 
-### Design architecture
+## Purpose / Նպատակ
 
-```text
-primitive/reference
-→ semantic
-→ component
-→ motion
-→ Webpage Product Extension
-→ section/pattern
-```
+**HY:** Website-ը ներկայացնում է MenQ Studio-ի AI, automation և custom-software ծառայությունները, ընդունում է leads/bookings և ապահովում է invite-only administration։
 
-Repository-ն governed consumer է, ոչ shared Design Platform source of truth։ MenQ brand expression-ը, homepage composition-ը, routes-ը և business logic-ը product-local են։ Canonical adoption/audit package-ը՝ [`docs/menq-standard/README.md`](docs/menq-standard/README.md)։
+**EN:** The website presents MenQ Studio's AI, automation, and custom-software services, accepts leads and bookings, and provides invite-only administration.
 
-### Implemented visual system
+## Architecture / Ճարտարապետություն
 
-- shared MenQ `BrandMark`,
-- premium header/navigation և mobile drawer,
-- redesigned hero + live operations dashboard,
-- premium cards, headings, buttons և panels,
-- public/admin shared visual foundation,
-- light/dark/system theme և reduced-motion support,
-- responsive mobile/desktop composition,
-- machine Design Platform validator և CI gate։
+**HY:** Repository-ն governed consumer է MenQ Standard-ի և Locked D-025 MenQ Design Platform-ի նկատմամբ։ Shared design contracts-ը product-neutral են, իսկ brand expression-ը, marketing composition-ը, content-ը, routes-ը և business logic-ը product-local են։
 
-### Stack
+**EN:** The repository is a governed consumer of MenQ Standard and the Locked D-025 MenQ Design Platform. Shared design contracts remain product-neutral, while brand expression, marketing composition, content, routes, and business logic remain product-local.
 
-Next.js 16 · React 19 · TypeScript · Tailwind CSS v3 · CSS variables · Prisma · PostgreSQL։
+## Canonical navigation / Canonical նավիգացիա
 
-### Run
+- [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md)
+- [`AI_WORKING_CONTEXT.md`](AI_WORKING_CONTEXT.md)
+- [`COLLABORATION_STYLE.md`](COLLABORATION_STYLE.md)
+- [`DOCUMENTATION_INDEX.md`](DOCUMENTATION_INDEX.md)
+- [`DECISION_INDEX.md`](DECISION_INDEX.md)
+- [`DECISIONS.md`](DECISIONS.md)
+- [`ROADMAP.md`](ROADMAP.md)
+- [`CHANGELOG.md`](CHANGELOG.md)
+- [`NEXT_CHAT_HANDOFF.md`](NEXT_CHAT_HANDOFF.md)
+- [`docs/menq-standard/README.md`](docs/menq-standard/README.md)
 
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
-```
+## Human–AI rule / Human–AI կանոն
 
-### Validate
+**HY:** Մարդը միտք է բերում։ AI-ն օգնում է։ Մարդը որոշում է։ Repository-ն պահպանում է truth-ը։
 
-```bash
-npm run validate
-```
+**EN:** Humans bring ideas. AI assists. Humans decide. The repository preserves truth.
 
----
-
-## English
-
-MenQ Webpage is MenQ Studio's public business website and lead-generation product, with a HY/EN/RU public surface, leads and bookings, and an invite-only admin panel.
-
-### Design architecture
-
-```text
-primitive/reference
-→ semantic
-→ component
-→ motion
-→ Webpage Product Extension
-→ section/pattern
-```
-
-The repository is a governed consumer, not the source of truth for the shared Design Platform. MenQ brand expression, homepage composition, routes, and business logic remain product-local. The canonical adoption and audit package is [`docs/menq-standard/README.md`](docs/menq-standard/README.md).
-
-### Implemented visual system
-
-- shared MenQ `BrandMark`,
-- premium header, navigation, and mobile drawer,
-- redesigned hero and live operations dashboard,
-- premium cards, headings, buttons, and panels,
-- shared visual foundation for public and admin surfaces,
-- light, dark, and system theme support with reduced motion,
-- responsive mobile and desktop composition,
-- machine Design Platform validator and CI gate.
-
-### Stack
-
-Next.js 16 · React 19 · TypeScript · Tailwind CSS v3 · CSS variables · Prisma · PostgreSQL.
-
-### Run
-
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
-```
-
-### Validate
-
-```bash
-npm run validate
-```
-
-<!-- END: MENQ_WEBPAGE_ROOT_README -->
+<!-- END: MENQ_WEBPAGE_README -->

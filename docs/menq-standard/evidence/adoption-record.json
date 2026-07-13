@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "recordId": "menq.webpage.design-platform-adoption.2026-07-13",
   "consumerId": "menq.webpage.public-site-admin",
   "consumerName": "MenQ Webpage",
@@ -8,10 +8,10 @@
   "parentDecision": "D-025",
   "designPlatformStatus": "Locked",
   "adoptionMode": "controlled-source-mapped",
-  "adoptionStatus": "Validated",
+  "adoptionStatus": "ValidatedAndMerged",
   "maturity": "M1-candidate",
   "baselineCommit": "f766943d92aa9c6c579a99ca0729c50a8f2206e1",
-  "validatedImplementationHead": "cf116453bb5e269076bbb65b929eeb9963288233",
+  "validatedImplementationHead": "ae4ef9519d9e9286d45440ffff4c1e83d02afaf1",
   "workflowRunId": 29216404490,
   "workflowRunNumber": 57,
   "workingBranch": "menq-design-platform-adoption-v1",
@@ -69,7 +69,20 @@
     "ownerInstruction": "go 1 run do all",
     "readyForReviewAuthorized": true,
     "mergeAuthorized": true,
-    "maturityPromotionAuthorized": false
+    "maturityPromotionAuthorized": false,
+    "documentationScopeInstruction": "դե թղթերը դզի, բայց նայ սիրուն սաղ ավելացրու որը չկա, երկու լեզվով, մանրամասն, ոնց ստանդարտինը արեցինք",
+    "documentationMergeAuthorized": false
   },
-  "overallVerdict": "GREEN"
+  "overallVerdict": "GREEN_IMPLEMENTATION_DOCUMENTATION_CLOSURE_CANDIDATE",
+  "implementationWorkflowRunId": 29216524360,
+  "implementationWorkflowRunNumber": 63,
+  "mergeCommit": "d985a5718ed7ec47717fdf271d14580e8eb947cb",
+  "documentationClosure": {
+    "status": "Candidate",
+    "branch": "menq-webpage-post-merge-closure",
+    "runtimeCodeChanged": false,
+    "mergeAuthorized": false,
+    "canonicalMarkdownCount": 41,
+    "totalMarkdownCount": 104
+  }
 }

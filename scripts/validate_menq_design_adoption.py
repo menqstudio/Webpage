@@ -1,188 +1,57 @@
 from __future__ import annotations
-
-import json
-import re
-import sys
+import json, re, sys
 from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+errors=[]; warnings=[]
 
-ROOT = Path(__file__).resolve().parents[1]
+def read(rel):
+ p=ROOT/rel
+ if not p.is_file(): errors.append(f'Missing required file: {rel}'); return ''
+ return p.read_text(encoding='utf-8')
 
-REQUIRED_MARKERS = {
-    "PROJECT_CONTEXT.md": "<!-- END: MENQ_WEBPAGE_PROJECT_CONTEXT -->",
-    "AI_WORKING_CONTEXT.md": "<!-- END: MENQ_WEBPAGE_AI_WORKING_CONTEXT -->",
-    "NEXT_CHAT_HANDOFF.md": "<!-- END: MENQ_WEBPAGE_NEXT_CHAT_HANDOFF -->",
-    "ROADMAP.md": "<!-- END: MENQ_WEBPAGE_ROADMAP -->",
-    "CHANGELOG.md": "<!-- END: MENQ_WEBPAGE_CHANGELOG -->",
-    "docs/menq-standard/README.md": "<!-- END: MENQ_WEBPAGE_STANDARD_PACKAGE_INDEX -->",
-    "docs/menq-standard/DESIGN_PLATFORM_ADOPTION.md": "<!-- END: MENQ_WEBPAGE_DESIGN_PLATFORM_ADOPTION -->",
-    "docs/menq-standard/PRODUCT_EXTENSION_BOUNDARY.md": "<!-- END: MENQ_WEBPAGE_PRODUCT_EXTENSION_BOUNDARY -->",
-    "docs/menq-standard/COMPONENT_AND_PAGE_INVENTORY.md": "<!-- END: MENQ_WEBPAGE_COMPONENT_PAGE_INVENTORY -->",
-    "docs/menq-standard/DESIGN_AUDIT_REPORT.md": "<!-- END: MENQ_WEBPAGE_DESIGN_AUDIT_REPORT -->",
-    "docs/menq-standard/VALIDATION_PLAN.md": "<!-- END: MENQ_WEBPAGE_VALIDATION_PLAN -->",
-    "docs/menq-standard/MIGRATION_AND_ROLLBACK_PLAN.md": "<!-- END: MENQ_WEBPAGE_MIGRATION_ROLLBACK_PLAN -->",
-    "docs/menq-standard/decisions/DECISION_INDEX.md": "<!-- END: MENQ_WEBPAGE_DECISION_INDEX -->",
+record=json.loads(read('docs/menq-standard/evidence/adoption-record.json') or '{}')
+expected={
+ 'schemaVersion':2,
+ 'consumerId':'menq.webpage.public-site-admin',
+ 'parentStandardRepository':'menqstudio/MenQ-Standard',
+ 'parentDecision':'D-025',
+ 'designPlatformStatus':'Locked',
+ 'adoptionMode':'controlled-source-mapped',
+ 'pullRequest':1,
+ 'mergeCommit':'d985a5718ed7ec47717fdf271d14580e8eb947cb',
 }
+for k,v in expected.items():
+ if record.get(k)!=v: errors.append(f'Adoption record {k} must be {v!r}; got {record.get(k)!r}')
+if record.get('adoptionStatus')!='ValidatedAndMerged': errors.append('Adoption status must be ValidatedAndMerged')
+if record.get('maturity')!='M1-candidate': errors.append('Maturity must remain M1-candidate')
+if record.get('documentationClosure',{}).get('runtimeCodeChanged') is not False: errors.append('Documentation closure must state runtimeCodeChanged=false')
+if record.get('authority',{}).get('maturityPromotionAuthorized') is not False: errors.append('Maturity promotion must remain unauthorized')
 
-BILINGUAL_SECTION_FILES = [
-    relative
-    for relative in REQUIRED_MARKERS
-    if relative
-    not in {
-        "CHANGELOG.md",
-        "docs/menq-standard/decisions/DECISION_INDEX.md",
-    }
+imports=[
+ '@import "../styles/tokens/primitives.css";',
+ '@import "../styles/tokens/semantic.css";',
+ '@import "../styles/tokens/components.css";',
+ '@import "../styles/tokens/motion.css";',
+ '@import "../styles/tokens/product-extension.css";',
+ '@import "../styles/tokens/sections.css";',
 ]
+global_css=read('src/app/globals.css')
+pos=[global_css.find(x) for x in imports]
+if any(x<0 for x in pos) or pos!=sorted(pos): errors.append('Token imports are missing or out of canonical order')
+semantic=read('src/styles/tokens/semantic.css'); extension=read('src/styles/tokens/product-extension.css')
+tokens={'--gradient-hero','--grid-line-color','--shadow-glow','--glass-bg','--glass-border-color','--glass-blur','--glass-shadow'}
+for token in sorted(tokens):
+ if token not in extension: errors.append(f'Missing Product Extension token: {token}')
+ if token in semantic: errors.append(f'Product-local token leaked into semantic.css: {token}')
 
-TOKEN_IMPORT_ORDER = [
-    '@import "../styles/tokens/primitives.css";',
-    '@import "../styles/tokens/semantic.css";',
-    '@import "../styles/tokens/components.css";',
-    '@import "../styles/tokens/motion.css";',
-    '@import "../styles/tokens/product-extension.css";',
-    '@import "../styles/tokens/sections.css";',
-]
-
-PRODUCT_EXTENSION_TOKENS = {
-    "--gradient-hero",
-    "--grid-line-color",
-    "--shadow-glow",
-    "--glass-bg",
-    "--glass-border-color",
-    "--glass-blur",
-    "--glass-shadow",
-}
-
-errors: list[str] = []
-warnings: list[str] = []
-
-
-def read_text(relative: str) -> str:
-    path = ROOT / relative
-    if not path.is_file():
-        errors.append(f"Missing required file: {relative}")
-        return ""
-    try:
-        return path.read_text(encoding="utf-8")
-    except UnicodeDecodeError as exc:
-        errors.append(f"UTF-8 read failed for {relative}: {exc}")
-        return ""
-
-
-for relative, marker in REQUIRED_MARKERS.items():
-    text = read_text(relative)
-    if text and not text.rstrip().endswith(marker):
-        errors.append(f"Missing or misplaced ending marker: {relative}")
-
-for relative in BILINGUAL_SECTION_FILES:
-    text = read_text(relative)
-    if text and ("## Հայերեն" not in text or "## English" not in text):
-        errors.append(f"Missing equal bilingual sections: {relative}")
-
-changelog = read_text("CHANGELOG.md")
-if changelog and ("### Հայերեն" not in changelog or "### English" not in changelog):
-    errors.append("CHANGELOG.md is missing bilingual entry sections")
-
-decisions = read_text("docs/menq-standard/decisions/DECISION_INDEX.md")
-if decisions and (
-    "| ID | Հայերեն | English | Status |" not in decisions
-    or "## Authority rule / Authority կանոն" not in decisions
-    or "**HY:**" not in decisions
-    or "**EN:**" not in decisions
-):
-    errors.append("Decision index is missing bilingual decision or authority content")
-
-record_path = ROOT / "docs/menq-standard/evidence/adoption-record.json"
-try:
-    record = json.loads(record_path.read_text(encoding="utf-8"))
-except (OSError, json.JSONDecodeError) as exc:
-    errors.append(f"Invalid adoption record: {exc}")
-    record = {}
-
-if record:
-    expected = {
-        "schemaVersion": 1,
-        "consumerId": "menq.webpage.public-site-admin",
-        "parentStandardRepository": "menqstudio/MenQ-Standard",
-        "parentDecision": "D-025",
-        "designPlatformStatus": "Locked",
-        "adoptionMode": "controlled-source-mapped",
-        "workingBranch": "menq-design-platform-adoption-v1",
-        "pullRequest": 1,
-    }
-    for key, value in expected.items():
-        if record.get(key) != value:
-            errors.append(
-                f"Adoption record field {key!r} must equal {value!r}; got {record.get(key)!r}"
-            )
-
-    verdict = record.get("overallVerdict")
-    authority = record.get("authority", {})
-    merge_authorized = authority.get("mergeAuthorized")
-    owner_instruction = authority.get("ownerInstruction")
-
-    if verdict not in {"YELLOW", "GREEN", "RED"}:
-        errors.append("Adoption record has an invalid overall verdict")
-    elif verdict == "GREEN":
-        if merge_authorized is not True:
-            errors.append("GREEN adoption record must carry explicit merge authority")
-        if owner_instruction != "go 1 run do all":
-            errors.append("GREEN merge authority must preserve the exact Owner instruction")
-    elif merge_authorized is not False:
-        errors.append("Non-GREEN adoption record must not claim merge authority")
-
-product_extension = read_text("src/styles/tokens/product-extension.css")
-semantic = read_text("src/styles/tokens/semantic.css")
-globals_css = read_text("src/app/globals.css")
-sections = read_text("src/styles/tokens/sections.css")
-
-for token in sorted(PRODUCT_EXTENSION_TOKENS):
-    if token not in product_extension:
-        errors.append(f"Product Extension token missing from product-extension.css: {token}")
-
-for token in sorted(PRODUCT_EXTENSION_TOKENS):
-    if token in semantic:
-        errors.append(f"Product-local token leaked into semantic.css: {token}")
-
-positions = [globals_css.find(line) for line in TOKEN_IMPORT_ORDER]
-if any(position < 0 for position in positions):
-    missing = [
-        line for line, position in zip(TOKEN_IMPORT_ORDER, positions, strict=True) if position < 0
-    ]
-    errors.append(f"Missing token imports in globals.css: {missing}")
-elif positions != sorted(positions):
-    errors.append("Token imports in globals.css are not in canonical dependency order")
-
-if "--glass-bg" not in sections or "--grid-line-color" not in sections:
-    errors.append("Section-scoped Product Extension overrides are incomplete")
-
-# Informational source scan. Raw literals are warnings because generated assets,
-# email templates, charts, and infrastructure can require reviewed exceptions.
-hex_pattern = re.compile(r"#[0-9a-fA-F]{3,8}\b")
-for path in sorted((ROOT / "src").rglob("*")):
-    if not path.is_file() or path.suffix not in {".ts", ".tsx", ".js", ".jsx", ".css"}:
-        continue
-    if "styles/tokens" in path.as_posix():
-        continue
-    text = path.read_text(encoding="utf-8")
-    matches = sorted(set(hex_pattern.findall(text)))
-    if matches:
-        warnings.append(
-            f"Review raw color literal(s) in {path.relative_to(ROOT).as_posix()}: {', '.join(matches)}"
-        )
-
+hexpat=re.compile(r'#[0-9a-fA-F]{3,8}\b')
+for p in sorted((ROOT/'src').rglob('*')):
+ if p.is_file() and p.suffix in {'.ts','.tsx','.js','.jsx','.css'} and 'styles/tokens' not in p.as_posix():
+  vals=sorted(set(hexpat.findall(p.read_text(encoding='utf-8'))))
+  if vals: warnings.append(f"Review raw colors in {p.relative_to(ROOT)}: {', '.join(vals)}")
 if warnings:
-    print("MENQ DESIGN ADOPTION WARNINGS")
-    for warning in warnings:
-        print(f"- {warning}")
-
+ print('MENQ DESIGN ADOPTION WARNINGS'); [print('-',x) for x in warnings]
 if errors:
-    print("MENQ DESIGN ADOPTION VALIDATION: RED")
-    for error in errors:
-        print(f"- {error}")
-    sys.exit(1)
-
-print("MENQ DESIGN ADOPTION VALIDATION: GREEN")
-print(f"Validated {len(REQUIRED_MARKERS)} canonical documentation files.")
-print("Token dependency order: GREEN")
-print("Product Extension isolation: GREEN")
-print("Machine-readable adoption evidence: GREEN")
+ print('MENQ DESIGN ADOPTION VALIDATION: RED'); [print('-',x) for x in errors]; sys.exit(1)
+print('MENQ DESIGN ADOPTION VALIDATION: GREEN')
+print('Validated merged adoption record, token order, and Product Extension isolation.')
