@@ -1,6 +1,8 @@
 name: MenQ Design Platform Audit
 
 on:
+  push:
+    branches: [menq-design-platform-adoption-v1]
   pull_request:
     branches: [main]
   workflow_dispatch:
