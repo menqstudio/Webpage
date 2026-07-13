@@ -2,7 +2,7 @@ name: MenQ Design Platform Audit
 
 on:
   push:
-    branches: [main, menq-design-platform-adoption-v1]
+    branches: [main, menq-design-platform-adoption-v1, menq-webpage-post-merge-closure]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -46,6 +46,9 @@ jobs:
               rows.append({'path': rel, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
           Path('audit-artifact/FILE_MANIFEST.json').write_text(json.dumps({'files': rows}, indent=2), encoding='utf-8')
           PY
+
+      - name: Validate MenQ Webpage documentation
+        run: python scripts/validate_webpage_documentation.py
 
       - name: Validate MenQ Design Platform adoption
         run: python scripts/validate_menq_design_adoption.py

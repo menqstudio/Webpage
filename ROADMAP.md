@@ -1,71 +1,45 @@
-# MenQ Webpage — Roadmap / MenQ Webpage — Ճանապարհային քարտեզ
-
-**Status / Կարգավիճակ:** Active / Ակտիվ
+# MenQ Webpage — Roadmap / Ճանապարհային քարտեզ
 
 ## Հայերեն
+### Completed
+- [x] D-025 adoption architecture and governance package
+- [x] Product Extension isolation
+- [x] Public/admin visual migration
+- [x] Validator, lint, typecheck, 24 tests, production build
+- [x] PR #1 merge and exact-tree verification
+- [x] Canonical documentation architecture
 
-### Current — Design Platform adoption v1
+### Next
+- [ ] M2 bounded operational pilot evidence
+- [ ] Automated visual-regression matrix for HY/EN/RU and light/dark/system
+- [ ] Automated accessibility checks for public and admin critical flows
+- [ ] Production observability baseline and incident runbook evidence
+- [ ] Versioned Design Platform package consumption when available
 
-- [x] Create governed adoption branch and Draft PR.
-- [x] Add root project/AI continuity files.
-- [x] Add bilingual MenQ Standard governance package.
-- [ ] Extract product-specific expression from shared semantic layer.
-- [ ] Add adoption validator and CI gate.
-- [ ] Complete source hardcode/token usage audit.
-- [ ] Run lint, typecheck, tests, and production build.
-- [ ] Validate HY/EN/RU, light/dark/system, responsive, accessibility, and motion matrices.
-- [ ] Close confirmed audit defects.
-- [ ] Produce final GREEN/YELLOW/RED validation record.
-- [ ] Obtain explicit Owner ready/merge authority.
-
-### Next — Operational adoption
-
-- establish versioned Design Platform package consumption when package distribution is available,
-- promote from M1 candidate to M2 pilot with a bounded real flow and rollback proof,
-- validate public and admin visual foundations against the same contracts,
-- add visual-regression evidence,
-- record adoption metrics and defects/feedback,
-- evaluate M3 conformance only after all applicable gates are GREEN։
-
-### Later — Proven consumer
-
-- run at least one meaningful release/migration cycle,
-- measure time-to-change, reuse, accessibility/localization defects and override debt,
-- return reusable lessons to MenQ Design Platform governance,
-- evaluate M4/M5 only with operational evidence and Owner authority։
-
----
+### Later
+- [ ] M3 conformance evaluation
+- [ ] Release-cycle metrics and override-debt measurement
+- [ ] Reusable lessons returned to MenQ Standard
 
 ## English
+### Completed
+- [x] D-025 adoption architecture and governance package
+- [x] Product Extension isolation
+- [x] Public/admin visual migration
+- [x] Validator, lint, typecheck, 24 tests, and production build
+- [x] PR #1 merge and exact-tree verification
+- [x] Canonical documentation architecture
 
-### Current — Design Platform adoption v1
+### Next
+- [ ] M2 bounded operational-pilot evidence
+- [ ] Automated visual-regression matrix for HY/EN/RU and light/dark/system
+- [ ] Automated accessibility checks for critical public and admin flows
+- [ ] Production-observability baseline and incident-runbook evidence
+- [ ] Versioned Design Platform package consumption when available
 
-- [x] Create the governed adoption branch and Draft PR.
-- [x] Add root project and AI continuity files.
-- [x] Add the bilingual MenQ Standard governance package.
-- [ ] Extract product-specific expression from the shared semantic layer.
-- [ ] Add the adoption validator and CI gate.
-- [ ] Complete source hardcode and token-usage audit.
-- [ ] Run lint, typecheck, tests, and production build.
-- [ ] Validate HY/EN/RU, light/dark/system, responsive, accessibility, and motion matrices.
-- [ ] Close confirmed audit defects.
-- [ ] Produce the final GREEN/YELLOW/RED validation record.
-- [ ] Obtain explicit Owner ready and merge authority.
-
-### Next — Operational adoption
-
-- establish versioned Design Platform package consumption when package distribution is available,
-- promote from M1 candidate to M2 pilot with a bounded real flow and rollback proof,
-- validate public and admin visual foundations against the same contracts,
-- add visual-regression evidence,
-- record adoption metrics and defects or feedback,
-- evaluate M3 conformance only after every applicable gate is GREEN.
-
-### Later — Proven consumer
-
-- run at least one meaningful release or migration cycle,
-- measure time-to-change, reuse, accessibility and localization defects, and override debt,
-- return reusable lessons to MenQ Design Platform governance,
-- evaluate M4 or M5 only with operational evidence and Owner authority.
+### Later
+- [ ] M3 conformance evaluation
+- [ ] Release-cycle metrics and override-debt measurement
+- [ ] Reusable lessons returned to MenQ Standard
 
 <!-- END: MENQ_WEBPAGE_ROADMAP -->

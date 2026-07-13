@@ -1,63 +1,54 @@
-# MenQ Webpage — Project Context / MenQ Webpage — Նախագծի կոնտեքստ
+# MenQ Webpage — Project Context / Նախագծի կոնտեքստ
 
-**Status / Կարգավիճակ:** Visual implementation complete — final CI pending / Visual implementation-ն ավարտված է — final CI-ն սպասվում է  
-**Owner / Պատասխանատու:** Gevorg Ohanyan, MenQ Owner  
+**Status / Կարգավիճակ:** Active — implementation merged and validated / Ակտիվ — implementation-ը merge և validate է արված  
+**Owner / Պատասխանատու:** Gevorg Ohanyan  
 **Repository:** `menqstudio/Webpage`  
 **Parent standard:** `menqstudio/MenQ-Standard`  
-**Decision:** Locked `D-025`  
-**Branch:** `menq-design-platform-adoption-v1`  
-**PR:** `#1`
+**Design authority:** Locked `D-025`  
+**Implementation merge:** `d985a5718ed7ec47717fdf271d14580e8eb947cb`
 
 ## Հայերեն
 
 ### Product identity
+MenQ Webpage-ը MenQ Studio-ի public business website և lead-generation product-ն է։ Այն ունի HY/EN/RU locale-ներ, leads, bookings, SEO, analytics hooks և invite-only admin panel։
 
-MenQ Webpage-ը public business website և lead-generation product է՝ HY/EN/RU, leads/bookings և invite-only admin capability-ներով։
+### Technology
+Next.js 16 App Router, React 19, TypeScript, Tailwind CSS v3, Prisma և PostgreSQL։
 
-### Authority boundary
+### Architecture boundary
+- MenQ Standard-ը shared operating authority-ն է։
+- Locked D-025-ը shared design authority-ն է։
+- Webpage-ը consumer է, ոչ Design Platform source of truth։
+- Brand, copy, routes, lead/admin workflows և product-specific visuals-ը product-local են։
+- API, database, auth/session/RBAC, notifications և integrations semantics-ը protected runtime scope են։
 
-- MenQ Standard/D-025-ը shared authority-ն են։
-- Webpage-ը governed consumer է։
-- Brand expression, marketing composition, copy, routes և business logic-ը product-local են։
-- Silent fork կամ incompatible shared-core mutation արգելված է։
-
-### Current implementation
-
-- Next.js 16, React 19, TypeScript, Tailwind v3, Prisma/PostgreSQL։
-- Token chain՝ primitives → semantic → components → motion → product extension → patterns։
-- Shared `BrandMark`, premium primitives և public/admin visual foundation։
-- Full hero/header/admin-shell migration և existing section system-ի premium treatment։
-- Protected scope՝ routes, locales, APIs, DB schema, auth/session/RBAC, notifications, analytics և SEO contracts։
-
-### Validation rule
-
-Final authority-ն GitHub Actions final head-ն է։ RED-ի դեպքում ուղղվում է միայն reported defect-ը։ GREEN-ից հետո final evidence-ը synchronized է արվում, PR-ը ready է դառնում և merge-ը կատարվում է Owner-ի explicit instruction-ով։
-
----
+### Current state
+- Design migration merge է արված PR #1-ով։
+- Token chain-ը՝ primitives → semantic → components → motion → product extension → sections/patterns։
+- Shared `BrandMark`, premium public/admin foundation, light/dark/system և reduced-motion support կան։
+- Validator, lint, typecheck, 24 tests և production build GREEN են։
+- Adoption maturity-ն մնում է M1-candidate։
 
 ## English
 
 ### Product identity
+MenQ Webpage is MenQ Studio's public business website and lead-generation product. It supports HY/EN/RU locales, leads, bookings, SEO, analytics hooks, and an invite-only administration panel.
 
-MenQ Webpage is the public business website and lead-generation product, with HY/EN/RU, leads and bookings, and invite-only administration capabilities.
+### Technology
+Next.js 16 App Router, React 19, TypeScript, Tailwind CSS v3, Prisma, and PostgreSQL.
 
-### Authority boundary
+### Architecture boundary
+- MenQ Standard is the shared operating authority.
+- Locked D-025 is the shared design authority.
+- Webpage is a consumer, not the Design Platform source of truth.
+- Brand, copy, routes, lead/admin workflows, and product-specific visuals remain product-local.
+- API, database, authentication/session/RBAC, notifications, and integration semantics are protected runtime scope.
 
-- MenQ Standard and D-025 are the shared authority.
-- Webpage is a governed consumer.
-- Brand expression, marketing composition, copy, routes, and business logic remain product-local.
-- Silent forks or incompatible shared-core mutations are prohibited.
-
-### Current implementation
-
-- Next.js 16, React 19, TypeScript, Tailwind v3, and Prisma/PostgreSQL.
-- Token chain: primitives → semantic → components → motion → product extension → patterns.
-- Shared `BrandMark`, premium primitives, and a public and admin visual foundation.
-- Complete hero, header, and admin-shell migration plus premium treatment for the existing section system.
-- Protected scope: routes, locales, APIs, database schema, authentication, session and RBAC, notifications, analytics, and SEO contracts.
-
-### Validation rule
-
-The final authority is GitHub Actions on the final head. On RED, only the reported defect is fixed. After GREEN, final evidence is synchronized, the PR is marked ready, and the merge is executed under explicit Owner instruction.
+### Current state
+- The design migration was merged through PR #1.
+- Token chain: primitives → semantic → components → motion → product extension → sections/patterns.
+- Shared `BrandMark`, premium public/admin foundation, light/dark/system, and reduced-motion support are implemented.
+- Validator, lint, typecheck, 24 tests, and production build are GREEN.
+- Adoption maturity remains M1-candidate.
 
 <!-- END: MENQ_WEBPAGE_PROJECT_CONTEXT -->

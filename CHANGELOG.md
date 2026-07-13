@@ -1,29 +1,29 @@
-# MenQ Webpage — Changelog / MenQ Webpage — Փոփոխությունների պատմություն
+# MenQ Webpage — Changelog / Փոփոխությունների պատմություն
 
-## 2026-07-13 — MenQ Design Platform adoption transaction opened
-
+## 2026-07-13 — Canonical documentation architecture completed
 ### Հայերեն
-
-- Բացվել է `menq-design-platform-adoption-v1` branch-ը և Draft PR #1-ը։
-- MenQ Standard-ի Locked D-025 Design Platform-ը սահմանվել է որպես shared design authority։
-- Ավելացվել են root `PROJECT_CONTEXT.md`, `AI_WORKING_CONTEXT.md`, `NEXT_CHAT_HANDOFF.md` և `ROADMAP.md` continuity files-ը։
-- Ավելացվել է bilingual `docs/menq-standard/` governance package-ը։
-- Գրանցվել են consumer identity, adoption scope, Product Extension boundary, audit findings, validation և rollback controls։
-- Ավելացվել է machine-readable adoption record։
-- Audit-ը հաստատել է, որ existing app-ը պահպանվող իրական full-stack product է։
-- Հաստատվել է architecture drift՝ Webpage-specific gradient/grid/glass expression-ը shared semantic layer-ի մեջ է և պետք է տեղափոխվի Product Extension layer։
-- Transaction verdict-ը մնում է YELLOW մինչև code remediation և current-branch validation evidence-ը GREEN լինեն։
+- Ավելացվել է ամբողջական HY/EN root canonical set։
+- Ավելացվել են architecture, contracts, governance, data-flow, admin, content/i18n, accessibility, security, testing և release docs։
+- Ավելացվել են W-D001–W-D007 detailed decision records։
+- Ավելացվել է post-merge closure record և machine-readable Markdown inventory։
+- Existing legacy/buildpack/must/QA docs-ը պահպանվել են որպես historical/operational evidence։
+- Runtime source չի փոխվել։
 
 ### English
+- Added the complete HY/EN root canonical set.
+- Added architecture, contracts, governance, data-flow, admin, content/i18n, accessibility, security, testing, and release documentation.
+- Added detailed W-D001–W-D007 decision records.
+- Added the post-merge closure record and machine-readable Markdown inventory.
+- Preserved existing legacy, buildpack, must, and QA documentation as historical or operational evidence.
+- No runtime source was changed.
 
-- Opened the `menq-design-platform-adoption-v1` branch and Draft PR #1.
-- Established the Locked D-025 MenQ Design Platform as the shared design authority.
-- Added root continuity files: `PROJECT_CONTEXT.md`, `AI_WORKING_CONTEXT.md`, `NEXT_CHAT_HANDOFF.md`, and `ROADMAP.md`.
-- Added the bilingual `docs/menq-standard/` governance package.
-- Recorded consumer identity, adoption scope, the Product Extension boundary, audit findings, validation, and rollback controls.
-- Added the machine-readable adoption record.
-- The audit confirmed that the existing application is a preserved real full-stack product.
-- Confirmed architecture drift: Webpage-specific gradient, grid, and glass expression is located in the shared semantic layer and must move to the Product Extension layer.
-- The transaction verdict remains YELLOW until code remediation and current-branch validation evidence are GREEN.
+## 2026-07-13 — Design Platform adoption merged
+### Հայերեն
+- PR #1 merge է արվել `d985a5718ed7ec47717fdf271d14580e8eb947cb` commit-ով։
+- Validator, lint, typecheck, 24 tests և production build GREEN են։
+
+### English
+- PR #1 was merged as commit `d985a5718ed7ec47717fdf271d14580e8eb947cb`.
+- Validator, lint, typecheck, 24 tests, and production build are GREEN.
 
 <!-- END: MENQ_WEBPAGE_CHANGELOG -->

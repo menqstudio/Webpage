@@ -11,13 +11,14 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "validate:design": "python scripts/validate_menq_design_adoption.py",
-    "validate": "npm run validate:design && npm run lint && npm run typecheck && npm test -- --run && npm run build",
+    "validate": "npm run validate:docs && npm run validate:design && npm run lint && npm run typecheck && npm test -- --run && npm run build",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "validate:docs": "python scripts/validate_webpage_documentation.py"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
