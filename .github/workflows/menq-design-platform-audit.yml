@@ -2,7 +2,7 @@ name: MenQ Design Platform Audit
 
 on:
   push:
-    branches: [menq-design-platform-adoption-v1]
+    branches: [main, menq-design-platform-adoption-v1]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -47,15 +47,23 @@ jobs:
           Path('audit-artifact/FILE_MANIFEST.json').write_text(json.dumps({'files': rows}, indent=2), encoding='utf-8')
           PY
 
-      - name: Baseline validation
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm ci
-          npm run lint
-          npx tsc --noEmit
-          npm test -- --run
-          npm run build
+      - name: Validate MenQ Design Platform adoption
+        run: python scripts/validate_menq_design_adoption.py
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test -- --run
+
+      - name: Build
+        run: npm run build
 
       - name: Upload audit source and inventory
         if: always()
