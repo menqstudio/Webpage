@@ -1,154 +1,44 @@
-/* Design tokens — must load before Tailwind so variables resolve everywhere. */
+/* Design-token dependency order:
+   primitive/reference → semantic → component → motion → product extension → pattern. */
 @import "../styles/tokens/primitives.css";
 @import "../styles/tokens/semantic.css";
 @import "../styles/tokens/components.css";
 @import "../styles/tokens/motion.css";
+@import "../styles/tokens/product-extension.css";
 @import "../styles/tokens/sections.css";
+@import "../styles/design-v2.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-    /* Account for the sticky header when jumping to anchors. */
-    scroll-padding-top: var(--size-header-height);
-    -webkit-text-size-adjust: 100%;
-  }
-
-  body {
-    background-color: var(--color-page-bg);
-    color: var(--color-content-primary);
-    font-family: var(--font-family-sans);
-    line-height: var(--line-height-normal);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-
-  /* Theme + color transitions feel premium, not jarring. */
-  body,
-  body * {
-    transition-property: background-color, border-color, color, fill, stroke;
-    transition-duration: var(--duration-base);
-    transition-timing-function: var(--ease-standard);
-  }
-
-  :focus-visible {
-    outline: 2px solid var(--color-focus-ring);
-    outline-offset: 2px;
-    border-radius: var(--radius-sm);
-  }
-
-  ::selection {
-    background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
-    color: var(--color-content-primary);
-  }
+  html { scroll-behavior: smooth; scroll-padding-top: var(--size-header-height); -webkit-text-size-adjust: 100%; }
+  body { background-color: var(--color-page-bg); color: var(--color-content-primary); font-family: var(--font-family-sans); line-height: var(--line-height-normal); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+  body, body * { transition-property: background-color, border-color, color, fill, stroke; transition-duration: var(--duration-base); transition-timing-function: var(--ease-standard); }
+  :focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+  ::selection { background-color: color-mix(in srgb, var(--color-accent) 30%, transparent); color: var(--color-content-primary); }
 }
 
 @layer utilities {
-  /* Decorative dotted/line grid background driven by tokens. */
-  .bg-grid {
-    background-image: linear-gradient(
-        to right,
-        var(--grid-line-color) 1px,
-        transparent 1px
-      ),
-      linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
-    background-size: var(--space-12) var(--space-12);
-  }
-
-  .bg-hero-gradient {
-    background-image: var(--gradient-hero);
-  }
-
-  /* Glass surface used in dark/futuristic sections. */
-  .glass {
-    background-color: var(--glass-bg);
-    border: 1px solid var(--glass-border-color);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    box-shadow: var(--glass-shadow);
-  }
-
-  /* When there's no saved theme and the OS prefers dark, the page is dark via
-     @media — make the toggle show the Sun (switch-to-light) icon to match. */
-  .theme-icon-sun {
-    display: none;
-  }
-  .theme-icon-moon {
-    display: block;
-  }
+  .bg-grid { background-image: linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px), linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px); background-size: var(--space-12) var(--space-12); }
+  .bg-hero-gradient { background-image: var(--gradient-hero); }
+  .glass { background-color: var(--glass-bg); border: 1px solid var(--glass-border-color); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); box-shadow: var(--glass-shadow); }
+  .theme-icon-sun { display: none; }
+  .theme-icon-moon { display: block; }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme]) .theme-icon-sun {
-      display: block;
-    }
-    :root:not([data-theme]) .theme-icon-moon {
-      display: none;
-    }
+    :root:not([data-theme]) .theme-icon-sun { display: block; }
+    :root:not([data-theme]) .theme-icon-moon { display: none; }
   }
-
-  .text-gradient-accent {
-    background-image: linear-gradient(
-      90deg,
-      var(--color-action-primary),
-      var(--color-accent)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  /* On-load entrance for above-the-fold (hero) content. Transform-only, opacity
-     stays 1, so it never delays Largest Contentful Paint. */
-  @keyframes rise-in {
-    from {
-      transform: translateY(12px);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-  .animate-rise {
-    animation: rise-in var(--duration-section) var(--ease-out) both;
-    animation-delay: var(--rise-delay, 0ms);
-  }
-
-  /* Scroll-reveal: hidden until the .is-visible class is toggled by observer. */
-  .reveal {
-    opacity: 0;
-    transform: translateY(var(--space-4));
-    transition-property: opacity, transform;
-    transition-duration: var(--duration-section);
-    transition-timing-function: var(--ease-out);
-    transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
-  }
-
-  .reveal.is-visible {
-    opacity: 1;
-    transform: none;
-  }
+  .text-gradient-accent { background-image: linear-gradient(90deg, var(--color-action-primary), var(--color-accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  @keyframes rise-in { from { transform: translateY(12px); } to { transform: translateY(0); } }
+  .animate-rise { animation: rise-in var(--duration-section) var(--ease-out) both; animation-delay: var(--rise-delay, 0ms); }
+  .reveal { opacity: 0; transform: translateY(var(--space-4)); transition-property: opacity, transform; transition-duration: var(--duration-section); transition-timing-function: var(--ease-out); transition-delay: var(--reveal-delay, 0ms); will-change: opacity, transform; }
+  .reveal.is-visible { opacity: 1; transform: none; }
 }
 
-/* Respect users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  .reveal { opacity: 1; transform: none; }
 }

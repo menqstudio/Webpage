@@ -1,0 +1,75 @@
+name: MenQ Design Platform Audit
+
+on:
+  push:
+    branches: [main, menq-design-platform-adoption-v1]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build repository inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p audit-artifact/source
+          git ls-files -z | while IFS= read -r -d '' file; do
+            case "$file" in
+              .env|.env.*|*.pem|*.key|*.p12|*.pfx) continue ;;
+            esac
+            mkdir -p "audit-artifact/source/$(dirname "$file")"
+            cp "$file" "audit-artifact/source/$file"
+          done
+          git ls-files > audit-artifact/TRACKED_FILES.txt
+          git ls-files '*.md' '*.MD' > audit-artifact/MARKDOWN_FILES.txt
+          git ls-files '*.ts' '*.tsx' '*.js' '*.jsx' '*.css' '*.scss' '*.json' '*.prisma' > audit-artifact/SOURCE_FILES.txt
+          git rev-parse HEAD > audit-artifact/HEAD_SHA.txt
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          root = Path('.')
+          rows = []
+          for path in sorted(root.glob('**/*')):
+              if not path.is_file() or '.git' in path.parts or 'audit-artifact' in path.parts:
+                  continue
+              rel = path.as_posix()
+              data = path.read_bytes()
+              rows.append({'path': rel, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
+          Path('audit-artifact/FILE_MANIFEST.json').write_text(json.dumps({'files': rows}, indent=2), encoding='utf-8')
+          PY
+
+      - name: Validate MenQ Design Platform adoption
+        run: python scripts/validate_menq_design_adoption.py
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test -- --run
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload audit source and inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: menq-webpage-audit-source
+          path: audit-artifact
+          if-no-files-found: error
+          retention-days: 7

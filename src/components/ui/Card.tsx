@@ -1,13 +1,14 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-type Variant = "solid" | "elevated" | "outline" | "glass";
+type Variant = "solid" | "elevated" | "outline" | "glass" | "brand";
 
 const variantMap: Record<Variant, string> = {
   solid: "bg-surface-primary border border-edge-subtle",
   elevated: "bg-surface-primary border border-edge-subtle shadow-card",
-  outline: "border border-edge-subtle",
+  outline: "border border-edge-subtle bg-transparent",
   glass: "glass",
+  brand: "border border-edge-strong bg-brand-soft shadow-card",
 };
 
 export function Card({
@@ -23,13 +24,8 @@ export function Card({
 }) {
   return (
     <div
-      className={cn(
-        "rounded-card p-6",
-        variantMap[variant],
-        interactive &&
-          "transition duration-base ease-standard hover:-translate-y-1 hover:border-edge-strong hover:shadow-lg",
-        className,
-      )}
+      data-interactive={interactive ? "true" : undefined}
+      className={cn("premium-card rounded-card p-6", variantMap[variant], className)}
     >
       {children}
     </div>

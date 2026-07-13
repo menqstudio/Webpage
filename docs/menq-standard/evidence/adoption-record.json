@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "recordId": "menq.webpage.design-platform-adoption.2026-07-13",
+  "consumerId": "menq.webpage.public-site-admin",
+  "consumerName": "MenQ Webpage",
+  "owner": "Gevorg Ohanyan",
+  "parentStandardRepository": "menqstudio/MenQ-Standard",
+  "parentDecision": "D-025",
+  "designPlatformStatus": "Locked",
+  "adoptionMode": "controlled-source-mapped",
+  "adoptionStatus": "Validated",
+  "maturity": "M1-candidate",
+  "baselineCommit": "f766943d92aa9c6c579a99ca0729c50a8f2206e1",
+  "validatedImplementationHead": "cf116453bb5e269076bbb65b929eeb9963288233",
+  "workflowRunId": 29216404490,
+  "workflowRunNumber": 57,
+  "workingBranch": "menq-design-platform-adoption-v1",
+  "pullRequest": 1,
+  "scope": {
+    "designTokens": true,
+    "components": true,
+    "patterns": true,
+    "themes": true,
+    "locales": ["hy", "en", "ru"],
+    "accessibility": true,
+    "motion": true,
+    "publicSite": true,
+    "adminVisualFoundation": true
+  },
+  "excludedScope": [
+    "database-schema",
+    "lead-booking-business-logic",
+    "authentication-session-rbac-semantics",
+    "notification-integrations",
+    "deployment-secrets"
+  ],
+  "tokenLayers": [
+    "primitives",
+    "semantic",
+    "components",
+    "motion",
+    "product-extension",
+    "sections",
+    "product-patterns"
+  ],
+  "confirmedDefects": {
+    "missingGovernedConsumerIdentity": "FIXED",
+    "productExpressionInSemanticLayer": "FIXED",
+    "missingVersionCompatibilityLinkage": "FIXED_CONTROLLED_SOURCE_MAPPING",
+    "documentationParityGap": "FIXED_GOVERNANCE_PACKAGE",
+    "missingAdoptionCIGate": "GREEN_EXECUTED",
+    "validatorBilingualFalsePositive": "FIXED",
+    "contrastPanelReadability": "FIXED"
+  },
+  "validation": {
+    "documentationIntegrity": "GREEN",
+    "tokenArchitecture": "GREEN",
+    "productExtensionIsolation": "GREEN",
+    "interactiveAccessibilityReview": "GREEN_KEY_FLOWS",
+    "lint": "GREEN",
+    "typecheck": "GREEN",
+    "tests": "GREEN_24_OF_24",
+    "build": "GREEN",
+    "workflowArtifact": "GREEN",
+    "localizationRuntime": "SUPPORTED_HY_EN_RU",
+    "responsiveThemeMatrix": "IMPLEMENTED_MANUAL_BASELINE"
+  },
+  "authority": {
+    "ownerInstruction": "go 1 run do all",
+    "readyForReviewAuthorized": true,
+    "mergeAuthorized": true,
+    "maturityPromotionAuthorized": false
+  },
+  "overallVerdict": "GREEN"
+}
