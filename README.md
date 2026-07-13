@@ -7,9 +7,17 @@ content, users, audit logs) with role-based access control.
 Built with **Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v3 ·
 CSS-variable design tokens · Prisma + PostgreSQL**.
 
+## MenQ Standard status / MenQ Standard վիճակ
+
+**HY:** Այս repository-ն MenQ Standard-ի Locked D-025 MenQ Design Platform-ի governed product consumer դառնալու adoption transaction-ի մեջ է։ Shared design authority-ն գտնվում է `menqstudio/MenQ-Standard` repository-ում։ Webpage-specific gradient, glass, landing composition, business content, routes և admin/lead logic-ը product-local extension են։ Current adoption verdict-ը YELLOW է մինչև current-branch CI/build evidence-ը GREEN լինի և Owner-ը explicit merge authority տա։
+
+**EN:** This repository is in an adoption transaction to become a governed product consumer of the Locked D-025 MenQ Design Platform. Shared design authority remains in the `menqstudio/MenQ-Standard` repository. Webpage-specific gradients, glass treatment, landing composition, business content, routes, and admin or lead logic remain product-local extensions. The current adoption verdict is YELLOW until current-branch CI and build evidence are GREEN and the Owner gives explicit merge authority.
+
+Canonical Webpage governance and audit package: [`docs/menq-standard/README.md`](docs/menq-standard/README.md).
+
 ## Highlights
 
-- **Fully tokenized design system** — zero hardcoded visual values; dark/light via `data-theme`.
+- **Governed token architecture** — primitive, semantic, component, motion, Product Extension, and section layers; dark/light via `data-theme`.
 - **i18n** — `/hy /en /ru`, fully translated dictionaries, hreflang + localized metadata.
 - **Lead flow** — validation, honeypot, tiered rate limiting, **DB-first** persistence, then
   Email + Telegram notifications with delivery status (degrades gracefully without a DB).
@@ -34,7 +42,7 @@ the env vars below.
 ```bash
 # 1) Set DATABASE_URL (PostgreSQL) in .env.local
 npm run db:migrate     # create tables
-npm run db:seed        # seed roles, permission catalog, and the super admin
+npm run db:seed        # seed roles, permissions, super admin
 # 2) Sign in at /admin/login with ADMIN_EMAIL / ADMIN_PASSWORD
 ```
 
@@ -51,28 +59,32 @@ are exposed to the browser; never commit real secrets.
 |---|---|
 | `npm run dev` / `build` / `start` | Next.js dev / production build / serve |
 | `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript without emit |
+| `npm test` | Vitest test suite |
+| `npm run validate:design` | MenQ Design Platform adoption validator |
+| `npm run validate` | Design validator + lint + typecheck + tests + production build |
 | `npm run db:migrate` / `db:deploy` | Prisma migrate (dev / prod) |
 | `npm run db:seed` | Seed roles, permissions, super admin |
 | `npm run db:studio` | Prisma Studio |
 
 ## Project structure
 
-```
+```text
 src/
   app/
     (site)/[locale]/      # public landing + legal pages (i18n)
     (admin)/admin/        # admin root layout, auth pages, (panel)/* dashboard etc.
     api/leads/route.ts    # public lead intake
     sitemap.ts, robots.ts
-  components/  ui/ layout/ landing/ admin/ legal/ theme/ i18n/ analytics/ seo/
+  components/             # ui, layout, landing, admin, legal, theme, i18n, analytics, seo
   content/locales/        # hy.ts / en.ts / ru.ts dictionaries
   config/                 # site, navigation, contact, icons, adminNav
-  lib/                    # i18n, cn, fonts, seo, forms, analytics,
-                          # db/ (prisma, systemEvents), auth/ (rbac, session, actions…),
-                          # leads/, integrations/ (email, telegram)
-  styles/tokens/          # primitives / semantic / components / motion / sections
+  lib/                    # i18n, cn, fonts, seo, forms, analytics, db, auth, integrations
+  styles/tokens/          # primitives, semantic, components, motion, product-extension, sections
 prisma/schema.prisma, prisma/seed.ts
-docs/                     # SPEC, WIREFRAME, BUILD_LOG, buildpack/, must/
+docs/                     # product specs, build history, operational docs
+docs/menq-standard/       # canonical adoption, audit, validation, decisions, evidence
+scripts/                   # machine validators
 ```
 
 ## Deployment
