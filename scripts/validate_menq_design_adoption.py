@@ -23,7 +23,15 @@ REQUIRED_MARKERS = {
     "docs/menq-standard/decisions/DECISION_INDEX.md": "<!-- END: MENQ_WEBPAGE_DECISION_INDEX -->",
 }
 
-BILINGUAL_FILES = list(REQUIRED_MARKERS)
+BILINGUAL_SECTION_FILES = [
+    relative
+    for relative in REQUIRED_MARKERS
+    if relative
+    not in {
+        "CHANGELOG.md",
+        "docs/menq-standard/decisions/DECISION_INDEX.md",
+    }
+]
 
 TOKEN_IMPORT_ORDER = [
     '@import "../styles/tokens/primitives.css";',
@@ -65,10 +73,23 @@ for relative, marker in REQUIRED_MARKERS.items():
     if text and not text.rstrip().endswith(marker):
         errors.append(f"Missing or misplaced ending marker: {relative}")
 
-for relative in BILINGUAL_FILES:
+for relative in BILINGUAL_SECTION_FILES:
     text = read_text(relative)
     if text and ("## Հայերեն" not in text or "## English" not in text):
-        errors.append(f"Missing equal bilingual top-level sections: {relative}")
+        errors.append(f"Missing equal bilingual sections: {relative}")
+
+changelog = read_text("CHANGELOG.md")
+if changelog and ("### Հայերեն" not in changelog or "### English" not in changelog):
+    errors.append("CHANGELOG.md is missing bilingual entry sections")
+
+decisions = read_text("docs/menq-standard/decisions/DECISION_INDEX.md")
+if decisions and (
+    "| ID | Հայերեն | English | Status |" not in decisions
+    or "## Authority rule / Authority կանոն" not in decisions
+    or "**HY:**" not in decisions
+    or "**EN:**" not in decisions
+):
+    errors.append("Decision index is missing bilingual decision or authority content")
 
 record_path = ROOT / "docs/menq-standard/evidence/adoption-record.json"
 try:
