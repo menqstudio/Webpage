@@ -114,10 +114,21 @@ if record:
             errors.append(
                 f"Adoption record field {key!r} must equal {value!r}; got {record.get(key)!r}"
             )
-    if record.get("authority", {}).get("mergeAuthorized") is not False:
-        errors.append("Draft adoption record must not claim merge authority")
-    if record.get("overallVerdict") not in {"YELLOW", "GREEN", "RED"}:
+
+    verdict = record.get("overallVerdict")
+    authority = record.get("authority", {})
+    merge_authorized = authority.get("mergeAuthorized")
+    owner_instruction = authority.get("ownerInstruction")
+
+    if verdict not in {"YELLOW", "GREEN", "RED"}:
         errors.append("Adoption record has an invalid overall verdict")
+    elif verdict == "GREEN":
+        if merge_authorized is not True:
+            errors.append("GREEN adoption record must carry explicit merge authority")
+        if owner_instruction != "go 1 run do all":
+            errors.append("GREEN merge authority must preserve the exact Owner instruction")
+    elif merge_authorized is not False:
+        errors.append("Non-GREEN adoption record must not claim merge authority")
 
 product_extension = read_text("src/styles/tokens/product-extension.css")
 semantic = read_text("src/styles/tokens/semantic.css")
