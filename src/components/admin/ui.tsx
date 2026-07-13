@@ -11,13 +11,19 @@ export function PageTitle({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+    <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tightest text-content-primary">
+        <div className="mb-3 flex items-center gap-3">
+          <span className="h-2 w-2 rounded-pill bg-accent shadow-glow" aria-hidden="true" />
+          <span className="text-2xs font-semibold uppercase tracking-wider text-content-muted">MenQ</span>
+        </div>
+        <h1 className="font-display text-3xl font-bold tracking-tightest text-content-primary">
           {title}
         </h1>
         {description ? (
-          <p className="mt-1 text-sm text-content-muted">{description}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-content-muted">
+            {description}
+          </p>
         ) : null}
       </div>
       {action}
@@ -25,56 +31,35 @@ export function PageTitle({
   );
 }
 
-export function Panel({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function Panel({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div
-      className={cn(
-        "rounded-card border border-edge-subtle bg-page p-5",
-        className,
-      )}
-    >
+    <div className={cn("premium-card rounded-card border border-edge-subtle bg-page p-5 shadow-sm", className)}>
       {children}
     </div>
   );
 }
 
-export function StatCard({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: ReactNode;
-  hint?: string;
-}) {
+export function StatCard({ label, value, hint }: { label: string; value: ReactNode; hint?: string }) {
   return (
-    <Panel>
+    <div className="premium-card rounded-card border border-edge-subtle bg-brand-soft p-5 shadow-sm">
       <div className="text-sm text-content-muted">{label}</div>
-      <div className="mt-1 font-display text-3xl font-bold text-content-primary">
-        {value}
-      </div>
-      {hint ? <div className="mt-1 text-xs text-content-muted">{hint}</div> : null}
-    </Panel>
+      <div className="mt-2 font-display text-3xl font-bold text-content-primary">{value}</div>
+      {hint ? <div className="mt-2 text-xs text-content-muted">{hint}</div> : null}
+    </div>
   );
 }
 
 const STATUS_TONES: Record<string, string> = {
-  NEW: "bg-accent-soft text-content-primary",
-  CONTACTED: "bg-surface-secondary text-content-secondary",
-  QUALIFIED: "bg-accent-soft text-content-primary",
-  PROPOSAL_SENT: "bg-surface-secondary text-content-secondary",
-  WON: "bg-accent-soft text-content-primary",
-  LOST: "bg-surface-secondary text-content-muted",
-  REJECTED: "bg-surface-secondary text-content-muted",
-  SPAM: "bg-surface-secondary text-content-muted",
-  DUPLICATE: "bg-surface-secondary text-content-muted",
-  ARCHIVED: "bg-surface-secondary text-content-muted",
+  NEW: "border border-edge-strong bg-accent-soft text-content-primary",
+  CONTACTED: "border border-edge-subtle bg-surface-secondary text-content-secondary",
+  QUALIFIED: "border border-edge-strong bg-accent-soft text-content-primary",
+  PROPOSAL_SENT: "border border-edge-subtle bg-surface-secondary text-content-secondary",
+  WON: "border border-edge-strong bg-accent-soft text-content-primary",
+  LOST: "border border-edge-subtle bg-surface-secondary text-content-muted",
+  REJECTED: "border border-edge-subtle bg-surface-secondary text-content-muted",
+  SPAM: "border border-edge-subtle bg-surface-secondary text-content-muted",
+  DUPLICATE: "border border-edge-subtle bg-surface-secondary text-content-muted",
+  ARCHIVED: "border border-edge-subtle bg-surface-secondary text-content-muted",
 };
 
 export function StatusPill({ status, label }: { status: string; label?: string }) {
@@ -82,7 +67,7 @@ export function StatusPill({ status, label }: { status: string; label?: string }
     <span
       className={cn(
         "inline-flex rounded-pill px-2.5 py-0.5 text-xs font-semibold",
-        STATUS_TONES[status] ?? "bg-surface-secondary text-content-secondary",
+        STATUS_TONES[status] ?? "border border-edge-subtle bg-surface-secondary text-content-secondary",
       )}
     >
       {label ?? status.replace(/_/g, " ")}
@@ -91,9 +76,5 @@ export function StatusPill({ status, label }: { status: string; label?: string }
 }
 
 export function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="rounded-card border border-dashed border-edge-strong bg-page p-10 text-center text-content-muted">
-      {message}
-    </div>
-  );
+  return <div className="premium-panel rounded-card border-dashed p-10 text-center text-content-muted">{message}</div>;
 }

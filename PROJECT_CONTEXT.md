@@ -1,70 +1,63 @@
 # MenQ Webpage — Project Context / MenQ Webpage — Նախագծի կոնտեքստ
 
-**Status / Կարգավիճակ:** Adoption remediation complete; execution evidence pending / Adoption remediation-ը ավարտված է, execution evidence-ը սպասվում է  
+**Status / Կարգավիճակ:** Visual implementation complete — final CI pending / Visual implementation-ն ավարտված է — final CI-ն սպասվում է  
 **Owner / Պատասխանատու:** Gevorg Ohanyan, MenQ Owner  
-**Repository:** `https://github.com/menqstudio/Webpage`  
-**Canonical parent standard:** `menqstudio/MenQ-Standard`  
-**Design Platform decision:** `D-025 — MenQ Design Platform Architecture v1`  
-**Working branch:** `menq-design-platform-adoption-v1`  
-**Draft PR:** `#1`  
-**Current verdict:** YELLOW
+**Repository:** `menqstudio/Webpage`  
+**Parent standard:** `menqstudio/MenQ-Standard`  
+**Decision:** Locked `D-025`  
+**Branch:** `menq-design-platform-adoption-v1`  
+**PR:** `#1`
 
 ## Հայերեն
 
-### Նպատակ
+### Product identity
 
-MenQ Webpage-ը MenQ Studio-ի public business website և lead-generation product-ն է՝ HY/EN/RU public site, leads/bookings և invite-only admin capability-ներով։
+MenQ Webpage-ը public business website և lead-generation product է՝ HY/EN/RU, leads/bookings և invite-only admin capability-ներով։
 
-### Architecture boundary
+### Authority boundary
 
-- MenQ Standard-ը և Locked D-025 Design Platform-ը canonical shared source-երն են։
-- Webpage-ը governed product consumer է, ոչ Design Platform source of truth։
-- Shared design contracts-ը գալիս են D-025-ից։
-- Brand expression-ը, marketing composition-ը, business content-ը, routes-ը և lead/admin logic-ը product-local extension են։
-- Shared core-ի silent fork/mutation-ը արգելված է։
+- MenQ Standard/D-025-ը shared authority-ն են։
+- Webpage-ը governed consumer է։
+- Brand expression, marketing composition, copy, routes և business logic-ը product-local են։
+- Silent fork կամ incompatible shared-core mutation արգելված է։
 
-### Ընթացիկ իրական վիճակ
+### Current implementation
 
 - Next.js 16, React 19, TypeScript, Tailwind v3, Prisma/PostgreSQL։
-- HY/EN/RU, dark/light/system theme, SEO, analytics, leads, bookings, RBAC և audit logging։
-- Token order՝ primitives → semantic → components → motion → product extension → sections։
-- Product-specific gradient/grid/glass tokens-ը հանվել են semantic layer-ից և տեղափոխվել `product-extension.css`՝ նույն variable names-ով, առանց նախատեսված visual փոփոխության։
-- Canonical bilingual governance package, machine adoption record, validator և CI workflow-ը ավելացված են։
-- Header drawer, FAQ և Lead Form key interactive accessibility flows-ը static review-ով GREEN են։
-- Current-head lint/typecheck/tests/build և runtime theme/locale/responsive evidence դեռ չեն գործարկվել կամ չեն հրապարակվել GitHub Actions-ում։
+- Token chain՝ primitives → semantic → components → motion → product extension → patterns։
+- Shared `BrandMark`, premium primitives և public/admin visual foundation։
+- Full hero/header/admin-shell migration և existing section system-ի premium treatment։
+- Protected scope՝ routes, locales, APIs, DB schema, auth/session/RBAC, notifications, analytics և SEO contracts։
 
-### Authority և continuation
+### Validation rule
 
-PR #1-ը մնում է Draft։ Ready/merge/maturity promotion authority չկա։ Հաջորդ gate-ը current-head execution evidence-ն է։ Failure-ի դեպքում fix արվում է միայն reported defect-ը։ GREEN-ի դեպքում final record-ը synchronized է արվում և Owner-ին ներկայացվում է merge decision-ը։
+Final authority-ն GitHub Actions final head-ն է։ RED-ի դեպքում ուղղվում է միայն reported defect-ը։ GREEN-ից հետո final evidence-ը synchronized է արվում, PR-ը ready է դառնում և merge-ը կատարվում է Owner-ի explicit instruction-ով։
 
 ---
 
 ## English
 
-### Purpose
+### Product identity
 
-MenQ Webpage is MenQ Studio's public business website and lead-generation product, with a HY/EN/RU public site, leads and bookings, and invite-only administration capabilities.
+MenQ Webpage is the public business website and lead-generation product, with HY/EN/RU, leads and bookings, and invite-only administration capabilities.
 
-### Architecture boundary
+### Authority boundary
 
-- MenQ Standard and the Locked D-025 Design Platform are the canonical shared sources.
-- Webpage is a governed product consumer, not a Design Platform source of truth.
-- Shared design contracts come from D-025.
-- Brand expression, marketing composition, business content, routes, and lead or admin logic remain product-local extensions.
-- Silent forks or mutations of shared core are prohibited.
+- MenQ Standard and D-025 are the shared authority.
+- Webpage is a governed consumer.
+- Brand expression, marketing composition, copy, routes, and business logic remain product-local.
+- Silent forks or incompatible shared-core mutations are prohibited.
 
-### Current real state
+### Current implementation
 
 - Next.js 16, React 19, TypeScript, Tailwind v3, and Prisma/PostgreSQL.
-- HY/EN/RU, dark/light/system theme, SEO, analytics, leads, bookings, RBAC, and audit logging.
-- Token order: primitives → semantic → components → motion → product extension → sections.
-- Product-specific gradient, grid, and glass tokens were removed from the semantic layer and moved to `product-extension.css` with stable variable names and no intended visual change.
-- A canonical bilingual governance package, machine adoption record, validator, and CI workflow have been added.
-- Key interactive accessibility flows for the Header drawer, FAQ, and Lead Form are GREEN by static review.
-- Current-head lint, typecheck, tests, build, and runtime theme, locale, and responsive evidence have not yet executed or appeared in GitHub Actions.
+- Token chain: primitives → semantic → components → motion → product extension → patterns.
+- Shared `BrandMark`, premium primitives, and a public and admin visual foundation.
+- Complete hero, header, and admin-shell migration plus premium treatment for the existing section system.
+- Protected scope: routes, locales, APIs, database schema, authentication, session and RBAC, notifications, analytics, and SEO contracts.
 
-### Authority and continuation
+### Validation rule
 
-PR #1 remains Draft. Ready, merge, and maturity-promotion authority are absent. The next gate is current-head execution evidence. On failure, only reported defects are fixed. On GREEN, the final record is synchronized and the merge decision is presented to the Owner.
+The final authority is GitHub Actions on the final head. On RED, only the reported defect is fixed. After GREEN, final evidence is synchronized, the PR is marked ready, and the merge is executed under explicit Owner instruction.
 
 <!-- END: MENQ_WEBPAGE_PROJECT_CONTEXT -->
